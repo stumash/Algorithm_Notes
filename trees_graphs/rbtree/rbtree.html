@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#rbtree-properties">RBTree Properties</a></li>
+<li><a href="#rbtree-representation">RBTree representation</a></li>
+<li><a href="#rotations">Rotations</a></li>
+<li><a href="#some-extra-facts-about-rbtrees">Some extra facts about RBTrees</a></li>
+<li><a href="#insertion">Insertion</a></li>
+<li><a href="#deletion">Deletion</a></li>
+</ul>
+</div>
+<h2 id="rbtree-properties">RBTree Properties</h2>
+<p>A red black tree is a binary tree that is always balanced. To achieve this, the root may<br />
+change as you add elements, unlike a binary tree. The 3 RBTree properties are:</p>
+<ol style="list-style-type: decimal">
+<li>Root and leaves are black</li>
+<li>No two reds in a row (red node has both children black)</li>
+<li>All root-to-leaf paths have same number of black nodes (true for all subtrees also)</li>
+</ol>
+<p>Before we move on, let’s look at two quick definitions:</p>
+<p><strong>Height of a node</strong><br />
+# of edges in longest path from node to leaf</p>
+<p><strong>BlackHeight of a node</strong><br />
+# number of black child nodes along path to NULL leaf. NULL leaf has BlackHeight 0. For example the black node 7 on the left of the tree has BlackHeight 1.</p>
+<h2 id="rbtree-representation">RBTree representation</h2>
+<div class="figure">
+<img src="repres.png" />
+
+</div>
+<p>Notice that in practice all leaves are the same black NULL node and that only the root<br />
+node has that same NULL as its parent node. Note that in these notes, we won’t show the<br />
+NULL connections so we’d just show this:</p>
+<div class="figure">
+<img src="repres2.png" />
+
+</div>
+<p>Any pseudocode we write will use the fact that all the leaves are the NULL node and so is<br />
+the root’s parent.</p>
+<h2 id="rotations">Rotations</h2>
+<div class="figure">
+<img src="rotate.png" />
+
+</div>
+<p>Here’s some ‘pseudocode’ to do a left rotate for the above diagram.</p>
+<pre><code>LeftRotate(Tree t, node x) {
+    y = x.right;            // take y&#39;s left
+    x.right = y.left;       // subtree and make
+    if (y.left != NULL) {   // it x&#39;s right
+        y.left.parent = x;  // subtree.
+    }
+
+    y.parent = x.parent;                // make x&#39;s
+    if (x.parent == NULL) {             // parent
+        t.root = y;                     // y&#39;s new
+    } else if (x.parent.left == x) {    // parent &amp;
+        x.parent.left = y;              // make y the
+    } else {                            // parent&#39;s
+        x.parent.right = y;             // correct
+    }                                   // child.
+    
+    y.left = x;     // make x y&#39;s left child
+    x.parent = y;   // make y x&#39;s parent
+}</code></pre>
+<h2 id="some-extra-facts-about-rbtrees">Some extra facts about RBTrees</h2>
+<p><strong>For a node <span class="math inline">\(x\)</span> with height <span class="math inline">\(h\)</span>, <span class="math inline">\(blackheight(x) \ge {h \over 2}\)</span>.</strong><br />
+Clearly true if no consecutive reds are allowed but consecutive blacks are.</p>
+<p><strong>A node <span class="math inline">\(x\)</span> must have at least <span class="math inline">\(2^{blackheight(x)} - 1\)</span> descendants. (not including NULLs)</strong><br />
+The rigorous proof is pretty annoying but the intuition is pretty easy. If we had a perfectly<br />
+balanced and completely full binary tree, the root <span class="math inline">\(x\)</span> of any given subtree would clearly<br />
+have at least <span class="math inline">\(2^{height(x)} - 1\)</span> descendants. Well, an RBTree is always full and perfectly<br />
+balanced with respect to blackheight (by property 3) – and this is true for all subtrees<br />
+rooted at any node in the RBTree. So the number of black descendants of any given node <span class="math inline">\(x\)</span><br />
+in the RBTree is therefore always at least <span class="math inline">\(2^{blackheight(x)} - 1\)</span>. So, that fact paired<br />
+with the fact that the blackheight of a node doesn’t account for all the possible red nodes<br />
+that can be sandwiched between all the black nodes means that for any node <span class="math inline">\(x\)</span> in the RBTree,<br />
+<span class="math inline">\(x\)</span> always has <strong>at least</strong> <span class="math inline">\(2^{blackheight(x)} - 1\)</span> descendants.</p>
+<p><strong>An RBTree with <span class="math inline">\(n\)</span> descendants has height at most <span class="math inline">\(2 log_2(n + 1)\)</span></strong><br />
+Let <span class="math inline">\(n\)</span> be the number of descendants of an RBTree, <span class="math inline">\(h\)</span> be its height and let <span class="math inline">\(bh\)</span> be its<br />
+blackheight. We just showed that <span class="math inline">\(n \ge 2^{blackheight(x)} - 1\)</span>. By simple algebra we can<br />
+rearrange this to be <span class="math inline">\(log_2(n+1) \ge bh\)</span>. We also saw that <span class="math inline">\(bh \ge {h \over 2}\)</span>. So,<br />
+<span class="math display">\[
+log_2(n+1) \ge bh \ge {h \over 2}\ \implies\ h \le 2 log_2(n+1)
+\]</span> Realize that this statement is proof the RBTree is balanced. We’ve shown that for the <span class="math inline">\(n\)</span><br />
+elements and height <span class="math inline">\(h\)</span> of an RBTree, <span class="math inline">\(h \in O(log(n))\)</span>. This is the entire goal of RBTrees<br />
+in the first place.</p>
+<h2 id="insertion">Insertion</h2>
+<p>Insertion into an RBTree basically consists of two steps:</p>
+<ol style="list-style-type: decimal">
+<li>Insert a node as if into a regular binary search tree and then color it red<br />
+</li>
+<li>Correct any RBTree properties that may have been violated during the BST-style insertion</li>
+</ol>
+<p>Here’s the pseudocode for the first step.</p>
+<pre><code>Algorithm RBT Insertion(RBTree T, node n):
+    Set n&#39;s color to red and both children to NULL
+    Let c be the root node
+    Let p be NULL
+
+    If c == NULL            // handle the case of
+        T.root = n          // n being added to
+        n.color = black     // an empty RBTree
+        return
+    Endif
+
+    While c is not NULL     // find the spot to
+        p = c               // put the new node
+        If n &lt;= c           // just like you
+            c = c.left      // would for a
+        Else                // regular BSTree
+            c = c.right
+        Endif
+    Endwhile
+
+    n.p = p             // set the parent-child
+    If n &lt; p            // relationship between
+        p.left = n      // n and its new parent
+    Else                // appropriately
+        p.right = n
+    Endif
+
+    call RBT Insertion Fixup(T,n)
+Endalgorithm</code></pre>
+<p>So how does the second step, the fixup step, work? Well, it turns out there are really<br />
+just three possible cases where the insertion results in a violation of RBTree<br />
+properties. All three of those cases are defined in the picture below and are even<br />
+accompanied by visual representations of typical examples.</p>
+<div class="figure">
+<img src="insertion_fixup.png" />
+
+</div>
+<p>Before we inspect these cases and their fixes one-by-one, let’s notice one thing first:<br />
+In all three cases, the issue is that the new node was added as a child of a red node.<br />
+Realize that <strong>none of the RBTree properties are violated</strong> if the new red node is added<br />
+as a child of a black node. Now that that’s out of the way, let’s take a closer look<br />
+at each case.</p>
+<ol style="list-style-type: decimal">
+<li><strong>a’s uncle (d) is red</strong><br />
+All we have to do to fix the problem is toggle the colors of a’s parent, uncle and<br />
+grandfather. Realize that from the perspective of node c’s parent, the blackheight<br />
+of node c has not changed, so our work on this subtree really is done after the color<br />
+toggling. The only issue is that by making c red, if c’s parent was red we’d have a<br />
+problem. So now we just call our insertion fixup recursively on c.<br />
+</li>
+<li><strong>a’s uncle (d) is black and a is a right child</strong><br />
+In this case we’re just trying to get the situation to be a case 3 so that we can then<br />
+apply the case 3 solution. To do that we’ll just rotate left around a’s parent and<br />
+then call insertion fixup recursively on what just was a’s parent.<br />
+</li>
+<li><strong>a’s uncle (d) is black and a is a left child</strong><br />
+Just like it says in the diagram, to fix a case 3 you right-rotate your grandparent<br />
+and then toggle the color of your new parent and sibling. When you finish a case 3,<br />
+you’re done – no more recursive calls.</li>
+</ol>
+<p>Okay, here’s the pseudocode to achieve that:</p>
+<pre><code>Algorithm Insertion Fixup(RBTree T, node n):
+    If n.parent.color == red
+
+        //if n&#39;s parent is a left child
+        If n.parent == n.parent.parent.left 
+
+            node uncle = n.parent.parent.right      // Case 1:
+            If uncle.color == red                   // Toggle color of
+                Toggle n.parent.color               // uncle, parent and
+                Toggle uncle.color                  // grandparent.
+                Toggle n.parent.parent.color        // Recursive call
+                Recursive call on n.parent.parent   // on grandparent.
+                Return;
+            Else
+                If n == n.parent.right      // Case 2:
+                    n = n.parent            // Right-rotate around n&#39;s
+                    Right-rotate on n       // parent and recursive 
+                    Recursive call on n     // call on n&#39;s old parent.
+                    Return
+                Else
+                    Right-rotate on n.parent.parent // Case 3:
+                    Toggle n.parent.color           // Toggle color of
+                    Toggle n.parent.right.color     // n&#39;s parent and
+                    Return                          // new sibling.
+                Endif                               // End of Alg.
+            Endif
+
+        //if n&#39;s parent is a right child
+        Else
+            // same as before but 
+            // with &quot;left&quot; and &quot;right&quot;
+            // exchanged
+        Endif
+
+    Endif
+Endalgorithm</code></pre>
+<h2 id="deletion">Deletion</h2>
+<p>If you really must know, you can find out how it works <a href="ins_del_tut.pdf">here</a>. I hope<br />
+you found this document helpful.</p>
+</body>
+</html>

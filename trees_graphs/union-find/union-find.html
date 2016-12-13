@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#the-union-find-data-structure">The Union-Find Data Structure</a></li>
+<li><a href="#findconnected-operation">Find/Connected operation</a></li>
+<li><a href="#union-operation">Union operation</a></li>
+<li><a href="#speed-with-optimizations">Speed with Optimizations</a></li>
+</ul>
+</div>
+<h2 id="the-union-find-data-structure">The Union-Find Data Structure</h2>
+<p>Honestly, I don’t think you can get a better explanation of how this works than you in <a href="https://www.youtube.com/watch?v=8mYfZeHtdNc&amp;list=PLe-ggMe31CTexoNYnMhbHaWhQ0dvcy43t&amp;index=1">these youtube videos</a> from the lectures of an algorithms course that princeton put up on the internet for free. Come back here when you’re done there if you think you need to.</p>
+<p>Here’s a <a href="https://www.youtube.com/channel/UCirCLaGiw_zT6vJNI_At6ag">link</a> to the entire set of lectures they put online. You can always google it if these links are broken.</p>
+<h2 id="findconnected-operation">Find/Connected operation</h2>
+<p>The <code>find(ei,ej)</code> operation will take two elements <span class="math inline">\(e_i\)</span> and <span class="math inline">\(e_j\)</span> and determine if they are connected in the union-find data structure.<br />
+<code>find(ei,ej)</code> has <span class="math inline">\(T(n) \in O(\lg(n))\)</span> where <span class="math inline">\(n\)</span> is the number of elements in the data structure so far.</p>
+<h2 id="union-operation">Union operation</h2>
+<p>The <code>union(ei,ej)</code> operation will take two elements and connected them so that the sets to which they belong will become one combined set.<br />
+<code>union(ei,ij)</code> has <span class="math inline">\(T(n) \in O(\lg(n))\)</span> where <span class="math inline">\(n\)</span> is the number of elements in the data structure so far.</p>
+<h2 id="speed-with-optimizations">Speed with Optimizations</h2>
+<p>As discussed in the videos linked to above, the data structure can be optimized such that M union-find operations on N object is <span class="math inline">\(O(N + M \lg^{*}(N))\)</span> which, since <span class="math inline">\(\lg^{*}\)</span> is a special function that is less than 5 up to the stupidly large number <span class="math inline">\(2^{65536}\)</span>, is more or less the same as <span class="math inline">\(O(N + M)\)</span>, linear time for linear operations!</p>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#the-quickselect-algorithm">The Quickselect algorithm</a></li>
+<li><a href="#running-time">Running time</a></li>
+</ul>
+</div>
+<h2 id="the-quickselect-algorithm">The Quickselect algorithm</h2>
+<p>The goal of the Quickselect algorithm is simple: quickly select the <span class="math inline">\(k^{th}\)</span> smallest element in an<br />
+unsorted array of <span class="math inline">\(n\)</span> elements. Note that the <span class="math inline">\(({n \over 2})^{th}\)</span> smallest element is the median.</p>
+<p>Lucky for me, a detailed explanation of how the algorithm works has already been<br />
+provided by MIT in this really good picture, so I don’t need to explain that at<br />
+all!</p>
+<div class="figure">
+<img src="quickSelect1.png" />
+
+</div>
+<h2 id="running-time">Running time</h2>
+<p>After we split the array into groups of five, if the number of elements in the array, <span class="math inline">\(n\)</span>, is not a<br />
+multiple of five, there will be one group at the end that does not have five elements. Let’s call<br />
+this group the “remainder group”.</p>
+<p>So, for an array of <span class="math inline">\(n\)</span> elements, there are <strong>at least</strong> <span class="math inline">\(ceil({n \over 5}) - 1\)</span> non-remainder groups<br />
+of 5. This is because if <span class="math inline">\(n\)</span> is not a multiple of 5, there will be exactly <span class="math inline">\(ceil({n \over 5}) - 1\)</span> non-remainder<br />
+groups of 5 and one remainder group of less than 5 elements. If <span class="math inline">\(n\)</span> <strong>is</strong> a multiple of 5, then there<br />
+will be exactly <span class="math inline">\(ceil({n \over 5}) = {n \over 5}\)</span> groups of 5 without a remainder group left over.</p>
+<p>Now that we have our groups of 5, let’s sort each of them separately. Since each of these groups contains<br />
+exactly 5 elements, a constant number of elements, running a sorting algorithm on each will take<br />
+constant time <span class="math inline">\(O(1)\)</span>. So, if we are doing an operation that’s <span class="math inline">\(O(1)\)</span> for <span class="math inline">\(n \over 5\)</span> groups, then<br />
+sorting all of those groups will take <span class="math inline">\(O(n)\)</span>. Once all the 5-element subgroups are sorted, let’s<br />
+make a set of all their medians.</p>
+<p>Now we’re going find the median of medians by calling Quickselect recursively on our set of medians.<br />
+Since there were <span class="math inline">\(n \over 5\)</span> groups of 5 elements, there are also <span class="math inline">\(n \over 5\)</span> medians from which to find the median of medians. Therefore using Quickselect recursively on our set of medians will take <span class="math inline">\(T({n \over 5})\)</span>. Let’s<br />
+remember that for our recurrence relation much later and for now just assume we have the median of medians.</p>
+<p>With our median of medians that we just got, we’re going to partition the array just like we did in<br />
+Quicksort, using the median of medians as the pivot: we’re going to put all elements less than the<br />
+pivot to its left and all elements greater than it to its right. If you don’t remember how that’s done<br />
+take a look at the <a href="qsort/qsort.html">notes on Quicksort</a>. At this point we’ve got the array partitioned as shown in<br />
+the first diagram, so all that remains is the recurive call. But to figure out the Big-O of the recursive<br />
+call, we have to figure out the size of the sub-array we’re going to call Quickselect on recursively.</p>
+<p>Remember that we are using Quickselect to get us the <span class="math inline">\(k^{th}\)</span> smallest element. So, if, after<br />
+partitioning using the median of medians, the position of our pivot is greater than k, we clearly<br />
+have to call Quicksort on the subarray that’s less than the pivot. Converserly, if, after<br />
+partitioning, the position <span class="math inline">\(p\)</span> of our pivot is less than k, we have to call Quicksort on the subarray<br />
+that’s greater than the pivot – but now we’re looking for the <span class="math inline">\({(p-k)}^{th}\)</span> element in that subarray<br />
+since all the elements in the subarray are greater than the <span class="math inline">\(p^{th}\)</span> smallest element in our original<br />
+array and we were looking for the <span class="math inline">\(k^{th}\)</span> smallest element in our original array.</p>
+<p>So, now that we understand something about how we’ll call Quickselect recursively on one of the two<br />
+subarrays, how do we put an upper bound on their size that’s useful for a recurrence relation so<br />
+that we can understand Quickselect’s Big-O? Realize that putting an upper bound on the size of these<br />
+subarrays is equivalent to putting an upper bound on the number of elements that are greater than or less<br />
+than the median of medians. Let’s start with another great picture from MIT to get us all using the same<br />
+visualization:</p>
+<div class="figure">
+<img src="quickSelect2.png" />
+
+</div>
+<p>Recall that the total number of 5 element groups, including the remainder group, is <span class="math inline">\(ceil({n \over 5})\)</span>. Notice that<br />
+half of those groups can have medians that are greater than the median of medians. Well, it’s<br />
+<em>not quite</em> half. If there are an odd number of groups then it would actually be the rounded-down<br />
+version of half so let’s say that there are at least <span class="math inline">\(floor({1 \over 2} ceil({n \over 5}))\)</span> groups of 5 elements<br />
+whose median is greater than the median of medians. Well, it’s <em>not quite</em> that number either, since<br />
+we shouldn’t count the group that actually contains the median of medians. So there are<br />
+<span class="math inline">\(floor({1 \over 2} ceil({n \over 5})) - 1\)</span> groups with medians larger than the median of medians.</p>
+<p>So, what then is the minumum number of <em>elements</em> (not groups) that are greater than the median of<br />
+medians? Well for each group whose median is greater than the median of medians, there are at least<br />
+3 elements that are greater than the median of medians. So, you’d figure that it would be 3 times<br />
+the expression we got at the end of the last paragraph. The only problem is that the expression<br />
+included the remainder group, which may not even have 3 elements, let alone 3 greater the median<br />
+of medians. So the answer is actually 3 times one less than that expression, or written in math:<br />
+<span class="math inline">\(3(floor({1 \over 2} ceil({n \over 5})) - 2)\)</span>. Oh! We almost forgot the two elements in the same<br />
+group as the median of medians that are greater than it. So our final expression for the minimum<br />
+number of elements greater than the median of medians is <span class="math inline">\(3(floor({1 \over 2} ceil({n \over 5})) - 2) + 2\)</span>. By<br />
+algebra we can show that this is greater than <span class="math inline">\({3 \over 10} n - 6\)</span>.</p>
+<p>Alright, we managed to put a lower bound on the number of elements that are <strong>greater than</strong> the median<br />
+of medians, and this lower bound could just as easily apply to the number of elements that are<br />
+<strong>less than</strong> the median of medians too. So really, we put a lower bound on the <em>size</em> of the two<br />
+subarrays that we’ll be calling Quicksort on recursively. What’s more, for any expression of <span class="math inline">\(n\)</span><br />
+that defines a lower bound on the size of the subarrays, <span class="math inline">\(n\)</span> minus that expression defines an<br />
+upper bound! So we finally have our upper bound on the size of these subarrays, and it’s<br />
+<span class="math inline">\(n - {3 \over 10} n - 6\ =\ {7 \over 10} n + 6\)</span>.</p>
+<p>Therefore, the recurrence relation of Quicksort is <span class="math inline">\(T(n) = T(ceil({n \over 5})) + T({7 \over 10}n + 6) + O(n)\)</span>.</p>
+<p>By some sneaky involved math (proof by the Substitution Method), that recurrence relation solves<br />
+to <span class="math inline">\(T(n) = O(n)\)</span>. For more information, check out <a href="mit_qselect.pdf">this document</a> from which I stole all the<br />
+diagrams and reasonings.</p>
+</body>
+</html>

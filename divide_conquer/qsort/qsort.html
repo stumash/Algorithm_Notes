@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#mergesort-vs.quicksort">MergeSort vs. QuickSort</a></li>
+<li><a href="#how-does-quicksort-work">How does Quicksort work?</a></li>
+<li><a href="#how-is-it-so-fast">How is it so fast?</a></li>
+<li><a href="#how-to-choose-a-good-pivot-quickly">How to choose a good pivot quickly</a></li>
+<li><a href="#implementation">Implementation</a></li>
+</ul>
+</div>
+<h2 id="mergesort-vs.quicksort">MergeSort vs. QuickSort</h2>
+<p>Both Mergesort and Quicksort are divide-and-conquer algorithms for sorting arrays. But,<br />
+the strategies used by the two algorithms are quite different. In Mergesort, the idea<br />
+was to break the array up into two halves, recursively sorting the two halves. When the<br />
+two halves were sorted, you could then combine them in linear time. Though Quicksort is<br />
+also divide-and-conquer and so also works by recurisively sorting subarrays of the original<br />
+array, the idea is a little different.</p>
+<h2 id="how-does-quicksort-work">How does Quicksort work?</h2>
+<p>In Quicksort, you first choose some elemenent to be the ‘pivot’ element. Then, you<br />
+rearrange the array so that all the elements less than the pivot are to the left of<br />
+it and all elements greater than it are to its right.</p>
+<p>I can already here you saying, “but - but, just because all the elements to the left of<br />
+the pivot are less than it and those to the right are more than it does not mean that the<br />
+array is sorted!”. You’re absolutely right. However, you must recall that we are using<br />
+this ‘choose pivot and rearrange’ strategy <em>recursively</em>. So, for our two subarrays<br />
+where the first has only elements less than the pivot and the second has only elements<br />
+greater than it, we then pick a pivot <em>within each subarray</em> and apply the strategy once<br />
+more <em>to each subarray</em>. So, by the end, our first pivot is to the right of and greater<br />
+than a sorted left-subarray, and is to the left and less than a sorted right-subarray. Thus,<br />
+the array is sorted.</p>
+<h2 id="how-is-it-so-fast">How is it so fast?</h2>
+<p>If you continuously pick the largest element as the pivot, then clearly Quicksort will run<br />
+in <span class="math inline">\(O(n^2)\)</span>. This is because you’ll be repeatedly taking the largest element in the array<br />
+and putting it at the far right of the (soont-to-be) left subarray - and then repeating this<br />
+recursively for the left subarray. This looks just like Selection Sort!</p>
+<p>So, the speed of Quicksort depends on the quality of the choice of pivot. If we can just pick<br />
+a pivot that is roughly the median, then Quicksort will split the array into two subarrays of<br />
+roughly the same size, kinda like Mergesort. If we do that, Quicksort runs in <span class="math inline">\(O(n\ log(n))\)</span><br />
+time. So, we now understand the idea of quicksort and how we can get it to be fast. We’re<br />
+left with only one issue:</p>
+<h2 id="how-to-choose-a-good-pivot-quickly">How to choose a good pivot quickly</h2>
+<p>As we saw, to get Quicksort to run in <span class="math inline">\(O(n\ log(n))\)</span> time, all we need is to pick pivots that<br />
+<em>almost always</em> are <em>almost the median</em>. How do we do that?</p>
+<p>If the array is in random order, we can just choose any element, conventionally the rightmost or<br />
+leftmost element is chosen. It turns out that picking a random element in a randomly<br />
+ordered array ends up being close enough to the median enough of the time that Quicksort will<br />
+run in <span class="math inline">\(O(n\ log(n))\)</span> time.</p>
+<p>Of course if you pick the rightmost or leftmost element and the array is already sorted, then<br />
+Quicksort degrades to <span class="math inline">\(O(n^2)\)</span> time. The easiest way to get around this is to pick the middle<br />
+element, so that for a sorted array Quicksort still runs <span class="math inline">\(O(n\ log(n))\)</span> time.</p>
+<p>The problem with choosing the middle element is that it’s easy for someone to construct an<br />
+array by hand that will cause Quicksort to degrade to <span class="math inline">\(O(n^2)\)</span> time. To make it harder to<br />
+construct such an array while keeping quicksort Big-O fast <em>and</em> practically fast, we can choose<br />
+the pivot by using a builtin random function. Of course, if you don’t think that someone will<br />
+do this or if your program doesn’t give someone the opportunity to manually create this large<br />
+array, then picking the middle element is fine. It’s also important to consider that the<br />
+‘perfectly bad array’ can still be constructed if we use a builtin random function (though<br />
+this requires more skill, time and effort) since builtin random functions are pseudorandom<br />
+and known to the public.</p>
+<p>So, what can we do to completely avoid the possibility of sorting a ‘perfectly bad array’ that<br />
+degrades our Quicksort to <span class="math inline">\(O(n^2)\)</span>? Well, we can write a custom random function so that no<br />
+malicious user can know how to make the ‘perfectly bad array’, but this array could still<br />
+technically occurr by chance (though very unlikely) – and worse, our custom function will<br />
+take long to execute which will slow down our Quicksort even though the Big-O is the same.</p>
+<p>The other option is to use the Median of Medians algorithm to pick the exact median every time.<br />
+Just like the custom random function, MoM will also slow down our Quicksort despite being able<br />
+to maintain the <span class="math inline">\(O(n\ log(n))\)</span>. However, using MoM can <strong>guarantee</strong> that the running time is<br />
+<span class="math inline">\(O(n\ log(n))\)</span> – in other words, MoM guarantees that no ‘perfectly bad array’ can be built to<br />
+degrade the Big-O of Quicksort.</p>
+<p><em>note: the Median of Medians algorithm is covered in the ‘medianOfMedian’ notes</em></p>
+<h2 id="implementation">Implementation</h2>
+<p>We all know this had to be done. Let’s take a look at some pseudocode to get a hands-on look at<br />
+this algorithm.</p>
+<pre><code>Algorithm Quicksort(array A, index L, index R):
+    If L is less than R
+        Find the pivot element and swap it with the last element
+        Partition the array into two subarrays with the pivot at index P
+         such that elements to the left of the pivot are less than it and
+         those to the right of it are greater than it.
+        Quicksort(A,L,P-1)
+        Quicksort(A,P+1,R)
+    Endif
+ EndAlgorithm</code></pre>
+<p>Everything inside the ‘If’ should be obvious. We’re finding the pivot and then putting it at the<br />
+back so that we can do the partitioning. When the partitioning is done, we have our pivot in between<br />
+the two subarrays so we end by calling quicksort recursively on them both.</p>
+<p>Why do we have ‘If L is less than R’? It’s to handle the case where the pivot is at the far left<br />
+or far right of the array after partitioning. If the pivot is at either end after partitioning, then<br />
+for the recursive calls either <code>P-1 &lt; L</code> or <code>P+1 &gt; R</code>. Why would the pivot be at either end? If the<br />
+array is of size 2 then this is guaranteed but we also might have chosen a pivot that was the smallest<br />
+or largest element in the array. The ‘If’ is also there to handle the base case where the array is of<br />
+size 1 and <code>L == R</code>.</p>
+<p>We already discussed methods for finding the pivot, so assuming we can find one then the only<br />
+unanswered question about Quicksort is how the partitioning works. First, you assume that the<br />
+pivot is at the far right. Then, you take all elements that are less than the pivot push them<br />
+as far left as they can go. Then, swap the pivot (which is on the far right) with the element<br />
+that is just to right of all those elements we just pushed to the left. Now, all the elements<br />
+to the left of the pivot are less than it and all the elements to the right of it are greater<br />
+than it. Here’s some pseudocode to accomplish that:</p>
+<pre><code>Function PivotPartition(array A, index L, index R):
+    Set index S equal to L
+    For (index I = L; I &lt; R; I++)
+        If A[I] &lt; A[R]
+            Swap A[I] with A[S]
+            Increment S
+        Endif
+    Endfor
+    Swap A[S] with A[R]
+Endfunction</code></pre>
+<p><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4">Alright we’re done congratulations.</a></p>
+</body>
+</html>

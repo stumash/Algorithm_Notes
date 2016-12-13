@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#unweighted-interval-scheduling">Unweighted Interval Scheduling</a></li>
+<li><a href="#dynamic-programming-general-idea">Dynamic Programming – General Idea</a></li>
+<li><a href="#weighted-interval-scheduling-prereqs">Weighted Interval Scheduling – Prereqs</a></li>
+<li><a href="#bruteforce-solution-to-weighted-interval-scheduling">Bruteforce Solution to Weighted Interval Scheduling</a></li>
+<li><a href="#dynamic-programming-solution">Dynamic Programming Solution</a></li>
+<li><a href="#running-time">Running Time</a></li>
+<li><a href="#bottom-up-solution">Bottom-Up Solution</a></li>
+<li><a href="#getting-the-intervals-themselves">Getting the Intervals Themselves</a></li>
+</ul>
+</div>
+<h2 id="unweighted-interval-scheduling">Unweighted Interval Scheduling</h2>
+<p>As we saw in the <a href="../greedy/intervals/intervals.html">notes on unweighted interval scheduling</a>, there exists a greedy algorithm to solve the unweighted version of the problem. But if each of the intervals also has a weight and the goal is not to maximize the number of intervals selected but rather to maximize the sum of the weights of the intervals selected, the greedy algorithm fails miserably. This is shown clearly in the picture below:</p>
+<div class="figure">
+<img src="greedy_failure.png" />
+
+</div>
+<h2 id="dynamic-programming-general-idea">Dynamic Programming – General Idea</h2>
+<p>The general strategy in dynamic programming is apply recursion except with <em>memory of the results of recursive calls</em>. In other words, you still break down a problem into one base case and a bunch of smaller, self-similar problems, except that now you store the results of the sub-problems so you don’t repeat having to solve them. Take for example a simple recursive Fibonacci implementation in java:</p>
+<div class="figure">
+<img src="java_fib.png" />
+
+</div>
+<p>The obvious problem with this implementation is that you have to recalculate the values of many of the Fibonacci numbers many times. A better way of doing this would be to store the results of every calculated value so that any other calculation that required a number we had already calculated would just have to look up the answer in a table instead of doing a whole recursion tree to recalculate the answer.</p>
+<p>This is the general idea of dynamic programming. It doesn’t always involve a problem with an obvious recurrence relation at its foundation or even recursion at all, but it’s always about storing the results of subproblems so that the larger problems can use their stored solution without having to recalculate.</p>
+<h2 id="weighted-interval-scheduling-prereqs">Weighted Interval Scheduling – Prereqs</h2>
+<p>Before we dive into the solution its dynamic programming optimization, let’s just take a look at some quick ideas about the problem so we can better understand what we have to do to solve it. First, consider a bunch of weighted intervals sorted by finishing time:</p>
+<div class="figure">
+<img src="intervals_sorted.png" />
+
+</div>
+<p>Let’s define a term, <span class="math inline">\(p(j)\)</span>. For the <span class="math inline">\(j^{th}\)</span> interval of the sorted-by-finishing-time intervals, <span class="math inline">\(p(j)\)</span> returns the largest index <span class="math inline">\(i\)</span> such that the <span class="math inline">\(i^{th}\)</span> inteval is compatible with the <span class="math inline">\(j^{th}\)</span> interval. For example, in the picture above, <span class="math inline">\(p(8)=5\)</span>, <span class="math inline">\(p(7)=3\)</span>, and <span class="math inline">\(p(2)=0\)</span>.</p>
+<p>Let’s define another term, <span class="math inline">\(OPT(j)\)</span>. <span class="math inline">\(OPT(j)\)</span> is the value (i.e. the sum of the weights) of the optimal solution to the problem consisting of intervals <span class="math inline">\(1,2,\ldots j\)</span>. Let’s notice that there are two recursively defined cases for the value of <span class="math inline">\(OPT(j)\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li>Case 1: <span class="math inline">\(OPT(j)\)</span> includes intervals <span class="math inline">\(j\)</span>
+<ul>
+<li><span class="math inline">\(OPT(j)\)</span> can’t use incompatible intervals <span class="math inline">\(\{ p(j) + 1, p(j) + 2, \ldots , j - 1 \}\)</span><br />
+</li>
+<li><span class="math inline">\(OPT(j)\)</span> must be equal to <span class="math inline">\(OPT(p(j)) + value_j\)</span><br />
+</li>
+</ul></li>
+<li>Case 2: <span class="math inline">\(OPT(j)\)</span> does not include interval <span class="math inline">\(j\)</span>
+<ul>
+<li><span class="math inline">\(OPT(j)\)</span> must equal <span class="math inline">\(OPT(j-1)\)</span></li>
+</ul></li>
+</ol>
+<p>Therefore, we have defined <span class="math inline">\(OPT(j)\)</span> as follows:<br />
+<span class="math display">\[
+OPT(j) = 
+\begin{cases}
+0 &amp; j = 0 \\
+max\{value_j + OPT(p(j)), OPT(j-1)\} &amp; j \ne 0
+\end{cases}
+\]</span></p>
+<p>So, after sorting the intervals by finishing time, we can clearly solve this problem just by calling a recursive function <code>OPT(j)</code> that is defined as above.</p>
+<h2 id="bruteforce-solution-to-weighted-interval-scheduling">Bruteforce Solution to Weighted Interval Scheduling</h2>
+<p>Based on our definition of <span class="math inline">\(OPT(j)\)</span>, we know that our algorithm will basically boil down to the following pseudocode (after sorting intervals by finishing time):</p>
+<pre><code>OPT(j) {
+    if (j == 0) {
+        return 0
+    } else {
+        return max(v_j + OPT(p(j)), OPT(j-1))
+    }
+}</code></pre>
+<p>The obvious problem with this implementation is the same as with the ‘naive’ implementation of the recursive Fibonacci function: many of the recursive calls will recalculate the same values over and over. On top of recalculating <code>OPT(j)</code> redundantly, <code>p(j)</code> will also be recalculated redundantly. Why not store both in an array for all values of j each time they’re calculated? This is the dynamic programming solution to the problem.</p>
+<p>Before we see the solution though, let’s try and actually figure out how bad the non-dynamic version is. Well, the exact number of calls and value of <code>p(j)</code> is heavily dependent on the exact intervals in a given instance of the problem, but it turns out that the regular recursive algorithm behaves just as badly as regular recursive Fibonacci: the value of j is roughly the height of a binary tree! In other words, the algorithm runs in <span class="math inline">\(2^n\)</span> even if we compute all values of <code>p[]</code> beforehand.</p>
+<h2 id="dynamic-programming-solution">Dynamic Programming Solution</h2>
+<p>We know that the solution is the same as the one from the last section but with just two differences: maintain two global arrays, one for <code>p[]</code> and one for <code>opt[]</code>, and then apply the recursive strategy as before. The pseudocode is given below:</p>
+<pre><code>Sort n intervals by finishing time
+
+For j = 1 to n
+    Calculate and store p[j]
+Endfor
+
+For j = 1 to n
+    opt[j] = empty
+Endfor
+opt[0] = 0
+
+function Opt(j) {
+    if (opt[j] is empty) {
+        opt[j] = max(v_j + Opt(p[j]), Opt(j-1))
+    }
+    return opt[j]
+}</code></pre>
+<h2 id="running-time">Running Time</h2>
+<p>Sorting the array by finishing time takes <span class="math inline">\(O(n \log(n))\)</span><br />
+Computing <span class="math inline">\(p(n) \forall n\)</span> takes <span class="math inline">\(O(n \log(n))\)</span> (using binary search)<br />
+Computing <span class="math inline">\(OPT(n)\)</span> using recursion and ‘memoization’ (storing sub-results) takes <span class="math inline">\(O(n)\)</span></p>
+<h2 id="bottom-up-solution">Bottom-Up Solution</h2>
+<p>Instead of using a recursive <code>Opt(j)</code> that has to recurse to the beginning of the intervals and then work its way to the end to give the final result, why not just use an interative solution to start at the beginning and then exit the loop and return the final value.</p>
+<div class="figure">
+<img src="bottom_up.png" />
+
+</div>
+<h2 id="getting-the-intervals-themselves">Getting the Intervals Themselves</h2>
+<p>The only possible issue with what we’ve discussed is that while our dynamic algorithm can give us the final value, it cannot give us the intervals themselves. This is common in dynamic programming. Also common in dynamic programming is that since we have stored the values of all the sub-problems, we can usually somehow backtrack through those stored solutions to retrieve the full solution in decent Big-O.</p>
+<p>In this case, the idea is simple. How do we know if a given interval was used to get the final value <code>opt[n]</code>? The same way we decided if it was going to be used to calculate <code>opt[n]</code> during the execution of the algorithm: if <span class="math inline">\(v_j + OPT(p(j)) \gt OPT(j-1)\)</span> then interval j is in the solution set. The pseudocode for this is shown below, and recall that both <code>p[j]</code> and <code>opt[j]</code> were defined for indices <span class="math inline">\(1 \ldots n\)</span>.</p>
+<pre><code>FindSolution(j) {
+    if (j &lt; 1) {
+        return
+    }
+    else if (v_j + opt[p[j]] &gt; opt[j-1]) {
+        print j
+        FindSolution(p[j])
+    }
+    else {
+        FindSolution(j-1)
+    }
+}</code></pre>
+</body>
+</html>

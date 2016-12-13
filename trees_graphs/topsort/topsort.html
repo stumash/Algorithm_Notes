@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#dag-and-their-topological-ordering">DAG and their Topological Ordering</a></li>
+<li><a href="#topological-sorting">Topological Sorting</a></li>
+</ul>
+</div>
+<h2 id="dag-and-their-topological-ordering">DAG and their Topological Ordering</h2>
+<p>DAGs, directed acyclic graphs, inherently have a topological order. In fact, there are<br />
+usually multiple valid topological orderings. A topological sorting algorithm is a<br />
+procedure that produces one such valid ordering from a given DAG.</p>
+<p>A topological ordering of a DAG is an ordered list of the DAG’s vertices where no node<br />
+<span class="math inline">\(n_j\)</span> that can be reached by some path from node <span class="math inline">\(n_i\)</span> appears before node <span class="math inline">\(n_i\)</span> in<br />
+the ordering.</p>
+<p>One way to think of it is that in a DAG, if you can get to one node <span class="math inline">\(c\)</span> by starting at<br />
+another node <span class="math inline">\(p\)</span>, then in a sense <span class="math inline">\(p\)</span> is kind of like one of <span class="math inline">\(c\)</span>’s ancestor nodes. So the<br />
+rule for a topological ordering is that all ancestors must appear before their descendants<br />
+in the topological ordering.</p>
+<p>Here is a graphic to show a graph in its adjacency list form, it’s graph diagram form,<br />
+and a valid topological ordering of the graph.</p>
+<div class="figure">
+<img src="topological.png" />
+
+</div>
+<h2 id="topological-sorting">Topological Sorting</h2>
+<p>The main idea in producing a topological ordering is to collect the leaf nodes and realize<br />
+that we should stick them at the end of our ordering right off the bat. That way they<br />
+automatically will come after their ancestors and they don’t have any descendants that<br />
+we need to avoid putting before them.</p>
+<p>Well, it’s a little more complicated than that but that’s a crucial idea. In the end, a<br />
+topological sort amounts to doing a depth first search with the added condition that<br />
+every time we reach a node that has no edges leading to any other yet-unvisited node, we<br />
+push it onto a stack so that when we pop everything out of it the nodes come out in the<br />
+reverse order that they were pushed in. If we run out of places to go, we just pick any<br />
+unvisited node and keep going.</p>
+<p>Here’s some pseudocode:</p>
+<pre><code>Function topsort(Graph G, Vertex V):
+    Mark V as visited
+    For each unvisited vertex W for which there is an edge from V to W 
+        topsort(G, W)   
+    Endfor
+    Push V onto S
+Endfunction
+
+Initialize an empty Stack S
+Algorithm Topological Sort(Graph G):
+    For each unvisited vertex V in G
+        topsort(G, V)
+    Endfor 
+    While S is not empty
+        Pop a vertex V from S and print it
+    Endwhile
+Endalgorithm</code></pre>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../pandoc.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#interval-scheduling">Interval Scheduling</a></li>
+<li><a href="#interval-partitioning">Interval Partitioning</a></li>
+<li><a href="#minimizing-lateness">Minimizing Lateness</a></li>
+</ul>
+</div>
+<h2 id="interval-scheduling">Interval Scheduling</h2>
+<div class="figure">
+<img src="scheduling.png" />
+
+</div>
+<p>The interesting thing to realize about the interval scheduling problem is that it is only asking “<strong>which non-overlapping intervals should we choose so that we can keep the highest number of intervals</strong>”. The question has nothing to do with re-scheduling the appointments that these intervals might represent. They all start and end at fixed times and we accept that we can’t keep all of them. The goal is only to choose the ones that let us keep the most possible.</p>
+<p>So how can we solve this? Well, there happens to be very simple Greedy Algorithm to solve this problem. But what are thooooossee?</p>
+<p>Greedy algorithms are algorithms that, at every point in their execution, have some straightforward method of choosing the best thing to do next and just repeatedly apply that method to the remaining things to do until they are done. To be honest, I think Wikipedia says it better:</p>
+<blockquote>
+<p>A greedy algorithm is an algorithmic paradigm that follows the problem solving heuristic of making the locally optimal choice at each stage with the hope of finding a global optimum.</p>
+</blockquote>
+<p>You should know that there are many cases where greedy algorithms are, in principle alone, not capable of finding the global optimum. Not for the problem we’re here to talk about though!</p>
+<p>As it turns out, there exists a greedy algorithm to solve the interval scheduling problem that can be proven to always find the optimal solution.</p>
+<p>The optimal algorithm is 2 steps:</p>
+<ol style="list-style-type: decimal">
+<li>Sort the list of intervals <span class="math inline">\((s_i,f_i)\)</span> by finishing time <span class="math inline">\(f_i\)</span>.<br />
+</li>
+<li>While elements remain in the list, add the soonest-ending interval compatible with the exisiting solution set to the solution set.</li>
+</ol>
+<div class="figure">
+<img src="scheduling_soln.png" />
+
+</div>
+<p>It’s not obvious that this algorithm produces the optimal solution. It does, though. How do we prove this? By contradiction.</p>
+<div class="figure">
+<img src="scheduling_proof.png" />
+
+</div>
+<p>As we can see in the picture, there are two reasons why the greedy is the optimal. First, even though we chose the maximal value of <span class="math inline">\(r\)</span>, there really is no reason to choose the optimal’s <span class="math inline">\({(r+1)}^{th}\)</span> choice over the greedy’s <span class="math inline">\({(r+1)}^{th}\)</span> choice. The greedy’s choice must end soonest, which means that it makes more room for all future choices than any other choice does. So, between the greedy’s <span class="math inline">\({(r+1)}^{th}\)</span> choice and the optimal’s <span class="math inline">\({(r+1)}^{th}\)</span> choice, the greedy’s <span class="math inline">\({(r+1)}^{th}\)</span> choice is actually <strong>more optimal</strong>. So if this optimal was truly the optimal it would make the same <span class="math inline">\({(r+1)}^{th}\)</span> choice as the greedy. Second, since the greedy’s <span class="math inline">\({(r+1)}^{th}\)</span> choice ends the soonest, both the greedy and the optimal have the same choices available for their <span class="math inline">\({(r+2)}^{th}\)</span> choice, and once again the greedy’s <span class="math inline">\({(r+2)}^{th}\)</span> choice would be the most optimal. Thus we have shown that the greedy algorithm consistently makes the best decision and that even though we picked <span class="math inline">\(r\)</span> to be as large as possible, it clearly could have been larger and that’s a contradiction so our proof by contradiction is complete.</p>
+<h2 id="interval-partitioning">Interval Partitioning</h2>
+<div class="figure">
+<img src="partition.png" />
+
+</div>
+<p>Notice that in the image above, there are at most 3 lectures that are running at every moment in time. This is called the <strong>depth</strong> of the set of intervals. Notice also that in the pecture above, 4 classrooms are used, despite the depth of the set of intervals being 3. Below, a solution is shown that uses only 3 classrooms for the same set of intervals.</p>
+<div class="figure">
+<img src="partition_better.png" />
+
+</div>
+<p>This is a better way to partition the intervals since it uses only 3 classrooms. Notice that the number of classrooms used is equal to the depth of the set of intervals. A good question is whether or not this is always possible? It’s obvious that the number of classrooms needed is at least the depth of the set, but does there always exists a partitioning that uses exactly the number of classrooms as the depth of the set <strong>and no more</strong>?</p>
+<p>Not only is the answer yes, but – you guessed it – there’s a greedy algorithm to solve this problem too!</p>
+<pre><code>Algorithm Interval Partition {
+    Sort all intervals by start time
+
+    While there are intervals left {
+        Let i be the next one
+
+        If there is an existing classroom whose
+        schedule is compatible with i {
+            Add i to the compatible classroom that has been
+            free for the longest time
+        }
+        Else {
+            Create a new classroom and add i to it
+        }
+    }
+}</code></pre>
+<p>Some details about the algorithm above:</p>
+<ul>
+<li>A good way to store the classrooms is in a priority queue. Priority is given to classrooms that have been free the longest – in other words, classrooms whose last scheduled interval had the earliest ending time.<br />
+</li>
+<li>This algorithm runs in <span class="math inline">\(O(n\ log(n))\)</span> time. First, it’s clearly <span class="math inline">\(O(n\ log(n))\)</span> for the sorting of the intervals. Then, for each of the <span class="math inline">\(n\)</span> intervals, we must choose a classroom to add them to. This choice takes at worst <span class="math inline">\(O(log(n))\)</span> (assuming we implement the priority queue as a heap), since each time we add to a classroom, we need to remove it and re-instert it into the priority queue since its key for the priority queue (the ending time of its most recent interval) has been changed.</li>
+</ul>
+<p>So it runs fast, but how do we know that it gives the optimal solution? With proof, of course. For the following proof, keep in mind that our algorithm never schedules two overlapping intervals in the same classroom.</p>
+<p>Before we start the proof, just know that the way the proof works is to show that the algorithm would use <span class="math inline">\(D\)</span> classes to partition the intervals only if at some point <span class="math inline">\(D\)</span> intervals overlapped with each other. This is clearly equivalent to proving that <span class="math inline">\(D\)</span> is the <strong>depth</strong> of the set of intervals.</p>
+<p>Okay so let’s say that the greedy partitioning algorithm terminates with <span class="math inline">\(D\)</span> classrooms used. The <span class="math inline">\(D^{th}\)</span> classroom was only used because it was trying to add some interval <span class="math inline">\(I\)</span> that was incompatible with the other <span class="math inline">\(D-1\)</span> classrooms. The algorithm decides <span class="math inline">\(I\)</span> is incompatible on the basis that the other <span class="math inline">\(D-1\)</span> classrooms has intervals ending after <span class="math inline">\(I\)</span>’s start time. And since the algorithm adds intervals in ascending order of start times, the other classrooms’ last intervals has to start before <span class="math inline">\(I\)</span> starts. So we have shown that the other classrooms’ last intervals started before <span class="math inline">\(I\)</span> and ended after <span class="math inline">\(I\)</span> started – therefore they all overlap with <span class="math inline">\(I\)</span>. Thus we have shown that if the algorithm uses <span class="math inline">\(D\)</span> classrooms, it is only because there are <span class="math inline">\(D\)</span> overlapping intervals. Proof is done.</p>
+<h2 id="minimizing-lateness">Minimizing Lateness</h2>
+<p>Imagine we have a bunch of jobs to do <strong>one at a time</strong> where each job has two properties: a duration and a deadline. We want to schedule these jobs so that the maximum amount time that any single job is past its deadline is minimized. We are <strong>not</strong> trying minimize total lateness, just <em>maximum</em> lateness. Here’s a graphic to some up the situation:</p>
+<div class="figure">
+<img src="min_late.png" />
+
+</div>
+<p>Considering this webpage is all about greedy algorithms, we’re going to try and solve this greedy-style. Let’s start by imposing some sorting order on the jobs. We can either sort them by in ascending order of duration <span class="math inline">\(t_j\)</span>, ascending order of deadline <span class="math inline">\(d_j\)</span>, or ascending order of the latest time the job can start without being late, “slack time”, deadline minus duration <span class="math inline">\(d_{j} - t_{j}\)</span>. We will choose to sort by deadline because of the following two counterexamples that show that sorting by duration or slack time does not minimize lateness.</p>
+<div class="figure">
+<img src="counter.png" />
+
+</div>
+<p>Our algorithm is greedy and we have sorted the jobs by deadline so all that’s left to do is add them in order of deadline. We literally add the one that needs to be done the soonest to the earliest time possible and then just repeat until nothing remains. On the off chance that’s not clear, here’s some pseudocode:</p>
+<div class="figure">
+<img src="min_late_greed.png" />
+
+</div>
+<p>That’s it! This greedy algorithm produces the optimal solution schedule for the minimizing lateness problem. As a final note, here are some tips for how to analyze greedy algorithms and determine if they are optimal.</p>
+<div class="figure">
+<img src="greedy_strategies.png" />
+
+</div>
+</body>
+</html>
