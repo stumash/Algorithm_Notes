@@ -6,7 +6,7 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../../pandoc.css" />
+  <link rel="stylesheet" href="../../pandoc.css" type="text/css" />
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
@@ -53,7 +53,7 @@
 the cycle is the closed loop of edges with arrows</p>
 </div>
 <p>This picture shows us that each time a cycle enters and exits a cut, it must share two edges with the cutset. Thus a cutset and a cycle must always share 0 or an even number of edges.</p>
-<p>Here’s another interesting fact: In any given graph, for any cut we take of that graph, the minimum edge in that cut’s cutset <strong>must</strong> be in the MST <strong>of the graph as a whole</strong>. Why is this necessarily true? We can prove it using one of the greedy analysis strategies discussed at the bottom of the <a href="intervals/intervals.html">page about interval scheduling</a>, the “exchange strategy”. Basically the proof is as follows and uses the picture below as visualization:</p>
+<p>Here’s another interesting fact: In any given graph, for any cut we take of that graph, the minimum edge in that cut’s cutset <strong>must</strong> be in the MST <strong>of the graph as a whole</strong>. Why is this necessarily true? We can prove it using one of the greedy analysis strategies discussed at the bottom of the <a href="../intervals/intervals.html">page about interval scheduling</a>, the “exchange strategy”. Basically the proof is as follows and uses the picture below as visualization:</p>
 <div class="figure">
 <img src="cut_property.png" alt="S is a cut, V-S is all nodes not in the cut, T* is the MST shown broken into two parts awaiting connection by either edge f or e. e is the minimum edge in S’s cutset, and f is another, non-minimum edge in S’s cutset" />
 <p class="caption">S is a cut, V-S is all nodes not in the cut, T* is the MST shown broken into<br />
@@ -102,7 +102,7 @@ graph, although cuts S and V-S are unconnected in T* until some connecting edge 
 End Algorithm</code></pre>
 <p>One quick implementation detail: There’s a special data structure called an <em>indexed priority queue</em> that let’s us have <span class="math inline">\(O(1)\)</span> lookup time for any value in the priority queue. Basically you just keep a Map of (node, node’s entry in priority queue) running at all times. Basically it’s just a priotiry queue + map.</p>
 <h2 id="kruskals-algorithm-for-mst-building">Kruskal’s Algorithm for MST-Building</h2>
-<p>This algorithm requires an understanding of the union-find data structure. Check out <a href="union-find/union-find.html">these notes</a> for more info.</p>
+<p>This algorithm requires an understanding of the union-find data structure. Check out <a href="../union-find/union-find.html">these notes</a> for more info.</p>
 <p>Just like Prim’s algorithm, the basic idea of Kruskal’s algorithm kind of just follows naturally from the properties of graphs that we talked about, the ones about the minimum values in cutsets (cut property) and maximum values in cycles (cycle property). Kruskal’s algorithm relies on the the property that the maximum value of any cycle can’t be in the MST. In short, you start by initializing the MST to empty. Then you sort all the edges in ascending order of cost. Then you literally just add edges that don’t create a cycle. That’s it. The tricky thing to design is just the part about always knowing whether an edge creates a cycle in your MST, which on the face of it, seems like something that should take a lot of time. That’s where the Union-Find data structure comes into play.</p>
 <div class="figure">
 <img src="kruskal_idea.png" />

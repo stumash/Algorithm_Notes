@@ -6,7 +6,7 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../../pandoc.css" />
+  <link rel="stylesheet" href="../../pandoc.css" type="text/css" />
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
@@ -18,7 +18,7 @@
 </ul>
 </div>
 <h2 id="the-shortest-path-problem">The Shortest Path Problem</h2>
-<p>Given a edge-weighted and directed graph, find the shortest path between any two nodes <code>s</code> and <code>t</code>. We should all be well aquainted with this problem from the <a href="../greedy/dijkstra/shortestDijkstra.html">notes on Dijkstra’s shortest path algorithm</a>.</p>
+<p>Given a edge-weighted and directed graph, find the shortest path between any two nodes <code>s</code> and <code>t</code>. We should all be well aquainted with this problem from the <a href="../../greedy/dijkstra/shortestDijkstra.html">notes on Dijkstra’s shortest path algorithm</a>.</p>
 <h2 id="negative-cycles">Negative Cycles</h2>
 <p>We already saw that Dijkstra’s Algorithm fails on graphs with negative edge weights, but this time we’re going to show some dynamic programming solutions to the Shortest Path problem that allow the graph to contain negative edge weights. However, we first need to discuss a case that can arise in a graph with negative edge weights that <strong>no shortest path algorithm can handle</strong>: the case of negative cycles.</p>
 <p>The idea is simple: somewhere in the graph, there exists a cycle for which the sum of its component edges’ weights <strong>is negative</strong>. This means that if we had some path between two nodes <span class="math inline">\(s\)</span> and <span class="math inline">\(t\)</span> not on the cycle, if the path chose to go around the cycle as many times as it wanted it could hypothetically have a path length of <strong>negative infinity</strong>. This is clearly not valid. The issue here is not so much that no algorithm can come up with ways to combat this issue, but rather than there is no good way to define path length when one of these negative cycles exists. So, we come to the following conclusion:</p>
@@ -27,7 +27,7 @@
 </blockquote>
 <p>Something to note: a simple path can visit at most <span class="math inline">\(|V|\)</span> number of vertices, and that path will therefore necessarily have <span class="math inline">\(|V| - 1\)</span> edges. Therefore, the max number of edges in any shortest <span class="math inline">\(s \rightarrow t\)</span> path is <span class="math inline">\(|V| - 1\)</span>.</p>
 <h2 id="recursive-definition-of-optimal-solution">Recursive Definition of Optimal Solution</h2>
-<p>This is the general strategy of dynamic programming as discussed in <a href="weighted_intervals/weighted_interval.html">the notes on weighted interval scheduling</a>, which was the first dynamic programming problem that we looked at.</p>
+<p>This is the general strategy of dynamic programming as discussed in <a href="../weighted_intervals/weighted_interval.html">the notes on weighted interval scheduling</a>, which was the first dynamic programming problem that we looked at.</p>
 <p><strong>INCOMPLETE</strong></p>
 </body>
 </html>

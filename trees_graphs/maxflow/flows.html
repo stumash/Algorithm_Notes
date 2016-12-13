@@ -6,7 +6,7 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../../pandoc.css" />
+  <link rel="stylesheet" href="../../pandoc.css" type="text/css" />
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
@@ -16,7 +16,7 @@
 <li><a href="#cuts-and-flows">Cuts and Flows</a></li>
 <li><a href="#max-flows">Max Flows</a></li>
 <li><a href="#attempts-at-maxflow-finding-algorithm">Attempts at MaxFlow-finding Algorithm</a></li>
-<li><a href="#residuals-and-augmenting-paths">Residuals and Augmenting Paths</a></li>
+<li><a href="#augmenting-paths">Augmenting Paths</a></li>
 </ul>
 </div>
 <h2 id="flow-network">Flow Network</h2>
@@ -65,6 +65,7 @@
 </div>
 <p>We can see that we’ll get stuck if we apply that strategy. We’ll max out certain edges and then won’t be able to find any <span class="math inline">\(s \rightarrow t\)</span> paths whose every edge has room for more flow – even though there will be many paths where <em>many</em> of the edges have much more room for flow. Clearly, as shown in the optimal solution, we will need to somehow take into account that the distribution of flows in the max flow is not so simple that our basic greedy algorithm can find it without screwing itself over.</p>
 <p>Most importantly, notice that what we seem to be missing is some kind of way to backtrack and decide to reditribute flow in some way so as to make room for adding more flow in total.</p>
-<h2 id="residuals-and-augmenting-paths">Residuals and Augmenting Paths</h2>
+<h2 id="augmenting-paths">Augmenting Paths</h2>
+<p>The failed strategy we just described involved finding a certain kind of <span class="math inline">\(s \rightarrow t\)</span> path – an augmenting path. As it was described above, it’s a path along which every single edge has not been maxed out. In other words, an <span class="math inline">\(s \rightarrow t\)</span> path along which we can <strong>augment</strong> the flow of each edge by at least some amount.</p>
 </body>
 </html>

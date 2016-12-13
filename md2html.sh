@@ -8,7 +8,13 @@ function pandochtmlmath() {
 }
 
 # run pandochtmlmath on every .md in the directory tree
-find . -regextype posix-extended -regex '\.md' |
+find $(pwd) -regextype posix-extended -regex '.*\.md$' |
 while read fl; do
-    pandochtmlmath $fl
+    if [ "$fl" != "$(realpath README.md)" ]; then
+        pandochtmlmath $fl
+        HTMLFILENAME=$(echo $fl | sed 's/\.md/.html/')
+        CSSPATH=$(realpath --relative-to=$fl pandoc.css)
+        sed -i "s#pandoc\.css#$CSSPATH#" $HTMLFILENAME
+        sed -i -r 's#\.\./(.*pandoc\.css)#\1#' $HTMLFILENAME
+    fi
 done
