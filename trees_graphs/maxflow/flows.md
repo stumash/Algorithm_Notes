@@ -48,8 +48,10 @@ We can see that we'll get stuck if we apply that strategy.  We'll max out certai
 
 Most importantly, notice that what we seem to be missing is some kind of way to backtrack and decide to reditribute flow in some way so as to make room for adding more flow in total.  
 
-## Augmenting Paths  
+## Augmenting Paths 
 
-The failed strategy we just described involved finding a certain kind of $s \rightarrow t$ path -- an augmenting path.  As it was described above, it's a path along which every single edge has not been maxed out.  In other words, an $s \rightarrow t$ path along which we can **augment** the flow of each edge by at least some amount.
+The failed strategy we just described involved finding a certain kind of $s \rightarrow t$ path -- an augmenting path.  As it was described above, it's a path along which every single edge has not had its flow maxed out to capacity.  In other words, an $s \rightarrow t$ path is a path along which we can still **augment** the flow of each edge by at least some amount.  That amount is called the **residual capacity**.  
 
+Realize that in every augmenting path, the residual capacity of the edge with the least residual capacity is maximum flow augmentation of that augmenting path.  This should be obvious since this fact was exactly the problem with out last algorithm attempt.  The algorithm failed because the it filled every augmenting path to "bottleneck capacity" (the capacity of the minimum capacity edge) and got stuck.  What we need is a way of redistributing flow to not get stuck.  To do this we'll need to broaden our definition of augmenting path.  
 
+INCOMPLETE

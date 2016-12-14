@@ -10,6 +10,8 @@ These notes also assume a basic familiarity with algorithms and data structures.
 
 These notes are presented below in the order that they were written.  Though it is not necessary to read them in the suggested order, pages in the following list may rely on information that can be found in pages that appear earlier in the list.  
 
+These notes were made possible by the great explanations of certain educators whose content is readily available on the internet.  In particular, Princeton's Roger Sedgewick's series of videos form his Coursera course *Algorithms (Part 1 and 2)* is one of the most complete set of clear explanations of the algoriths discussed in these notes that can be found anywhere.  
+
 ## Divide and Conquer  
 
 [QuickSort](divide_conquer/qsort/qsort.html)  
