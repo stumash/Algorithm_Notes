@@ -12,7 +12,7 @@ will not suffice.
   
 ## BFS Using an Array of Lists - One List per Level  
   
-So, what would be better?  Well if we built up an array of lists during the BFS so that each list  
+So, what would be better?  Well, if we built up an array of lists during the BFS so that each list  
 corresponds to a level, we would be able to access nodes by level.  The speudo-code for doing that  
 is shown below:
 
@@ -51,19 +51,13 @@ usage as demonstrated in the next section.
 So how can we do our breadth-first traversal while storing the enountered nodes in the most  
 convenient data structure -- a data structure that lets us both access the nodes by level and  
 access the nodes' BFS tree parent and children by node?  We build an adjacency list  
-representation of the BFS tree on top of the array of lists-per-level from the last section.  
+representation of the BFS tree on top of the array of lists (one per level) from the last section.  
 
-Our array of lists H[] will have one list for each node we encounter.  The first element of the  
-list will be that node's parent node in the BFS tree.  The rest of list will be all the nodes  
-children in the BFS tree.  With H[], not only will we be able to access the nodes by their  
-depth in the BFS tree, but we'll also be able to access their parent and children nodes.  
-
-One should note that there are implementations that improve the performance of accessing this  
-information tremendously.  For example H[] can be a hashmap of lists instead of an array of them  
-which would let us access the list of nodes N' adjacent to any node N in the BFS tree in constant  
-time.  The main point of this aside is that we can assume we can index into H[] using only a node.  
-
-That tangent aside, let's see how we construct this array H[] during the BFS.  
+Our adjacency list representation, a hashmap of lists `H[]`, will have one list for each node we  
+encounter.  The first element of the list will be that node's parent node in the BFS tree.  The  
+rest of list will be all the node's children in the BFS tree.  We'll still have `A[]` to access  
+nodes by their depth in the BFS tree but now we'll also be able to see a node's parent and  
+children in the BFS tree by checking `H[node]`.  
 
 ~~~
 Algorithm BFS:
@@ -72,19 +66,15 @@ Let A[] be an array of lists, one list for every level of BFS tree
 Let H[] be an array of lists, one list for every node in the graph
 Set the level counter lcount=0
 Initialize A[0] to consist of the single root node
-Set the node counter ncount=0
 While A[lcount] is not empty
     Initialize the empty list A[lcount + 1]
     For each node N in A[lcount]
         Set N isDiscovered=true
-        Let H[ncount] be the 'BFS tree adjacency list' of N
-        Set parent_ncount equal to ncount
-        Increment ncount by one
         For each node N' adjacent to N
             If N' !isDiscovered
                 Add N' to A[lcount + 1]
-                Add N' to P[parent_ncount] //N adjlist gets child N'
-                Add N to P[ncount] //N' adjlist gets parent N
+                Add N' to H[N] //N adjlist gets child N'
+                Add N to H[N'] //N' adjlist gets parent N
                 Increment ncount by one
             Endif
         Endfor
@@ -92,7 +82,3 @@ While A[lcount] is not empty
     Increment lcount by one
 Endwhile
 ~~~
-
-## What Did You Learn?
-
-You tell me, big guy.
