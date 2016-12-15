@@ -1,6 +1,6 @@
 ## Foreword  
 
-These notes assume an understanding of Assymptotic Time Complexity Analysis (Big O).  Namely, that $O(f(n))$ is the set of functions that are assymptotically upper-bound by $f(n)$ -- that is to say the set of functions for which we can choose some input value $n_0$ beyond which all functions in the set can be guaranteed to be less than some constant multiple of $f(n)$.  
+These notes assume an understanding of Asymptotic Time Complexity Analysis (Big O).  Namely, that $O(f(n))$ is the set of functions that are asymptotically upper-bound by $f(n)$ -- that is to say the set of functions for which we can choose some input value $n_0$ beyond which all functions in the set can be guaranteed to be less than some constant multiple of $f(n)$.  
 
 $$
 O(f(n))=\{x(n):x(n) \le k \cdot f(n)\ \land n_0 \ge 0 \land n \ge n_0 \land k \lt \infty\}
