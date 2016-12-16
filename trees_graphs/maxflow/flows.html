@@ -18,6 +18,7 @@
 <li><a href="#attempts-at-maxflow-finding-algorithm">Attempts at MaxFlow-finding Algorithm</a></li>
 <li><a href="#augmenting-paths">Augmenting Paths</a></li>
 <li><a href="#a-second-attempt-at-an-algorithm">A Second Attempt at an Algorithm</a></li>
+<li><a href="#finding-augmenting-paths">Finding Augmenting Paths</a></li>
 </ul>
 </div>
 <h2 id="flow-network">Flow Network</h2>
@@ -63,15 +64,15 @@
 <img src="greedy_opt.png" />
 
 </div>
-<p>Why did it fail? We maxed out the blue <span class="math inline">\(s \rightarrow t\)</span> path and then weren’t able to find any other <span class="math inline">\(s \rightarrow t\)</span> paths whose <strong>every</strong> edge has room for more flow – even though there still are paths where some of the edges have more room for flow. Notice that what we seem to be missing is some kind of way to backtrack and redistribute flow to make room on some edges to add more flow. In this example, we would have liked to backtrack on edges <span class="math inline">\((2,t)\)</span> and <span class="math inline">\((1,2)\)</span>, redirecting 10 flow to edge <span class="math inline">\((1,t)\)</span> so that we could add 10 flow to edges <span class="math inline">\((s,2)\)</span> and <span class="math inline">\((2,t)\)</span> to get the optimal s-t flow of 30.</p>
+<p>Why did it fail? We maxed out the blue <span class="math inline">\(s \rightarrow t\)</span> path and then weren’t able to find any other <span class="math inline">\(s \rightarrow t\)</span> paths whose <strong>every</strong> edge has room for more flow – even though there still are paths where <strong>some</strong> of the edges have more room for flow. Notice that what we seem to be missing is some kind of way to backtrack and redistribute flow to make room on some edges to add more flow. In this example, we would have liked to backtrack on edges <span class="math inline">\((2,t)\)</span> and <span class="math inline">\((1,2)\)</span>, redirecting 10 flow to edge <span class="math inline">\((1,t)\)</span> so that we could add 10 flow to edges <span class="math inline">\((s,2)\)</span> and <span class="math inline">\((2,t)\)</span> to get the optimal s-t flow of 30.</p>
 <h2 id="augmenting-paths">Augmenting Paths</h2>
 <p>The failed strategy we just described involved finding a certain kind of <span class="math inline">\(s \rightarrow t\)</span> path: an <strong>augmenting path</strong>. As it was described above, it’s a path along which each edge has less flow than capacity. In other words, an augmenting path is a path along which we can still <strong>augment</strong> the flow of each edge by at least some amount.</p>
 <p>That amount is called the <strong>residual capacity</strong> of each edge. The residual capacity of an edge is therefore its capacity minus its flow.</p>
 <p>Of all the edges in an augmenting path, there will be one or more that have the smallest residual capacity. When we augment the flow along the augmenting path, we will only be able to augment as much as the smallest residual capacity in the path (let’s call this the “bottleneck capacity” of the augmenting path). The other edges in the path might have much larger residual capacities that are being wasted. If we broaden our definition of an augmenting path, we might be able to add and redistribute flow so that less residual capacity goes to waste.</p>
 <p>Let’s now say that an augmenting path isn’t just a path from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> where we travel forward along edges that have a <strong>non-zero residual capacity</strong>, augmenting all flows by bottleneck capacity of the path. Instead, let’s say that we can also travel <em>backwards</em> along edges that have a <strong>non-zero flow</strong>. How can this work? Consider the following figure, which is a depiction of <strong>some small portion of a much larger s-t graph</strong>:</p>
 <div class="figure">
-<img src="backpath.png" alt="The 3/6 on edge (A,B) means that edge (A,B) has 3 flow and a capacity of 6" />
-<p class="caption">The “3/6” on edge <span class="math inline">\((A,B)\)</span> means that edge <span class="math inline">\((A,B)\)</span> has 3 flow and a capacity of 6</p>
+<img src="backpath.png" alt="The 3/6 on edge (A,B) means that edge (A,B) has 3 flow and a capacity 6" />
+<p class="caption">The “3/6” on edge <span class="math inline">\((A,B)\)</span> means that edge <span class="math inline">\((A,B)\)</span> has 3 flow and a capacity 6</p>
 </div>
 <p>Even though edge <span class="math inline">\((A,B)\)</span> has a residual capacity of 3, we can’t augment the flow by that amount since the increased flow will have nowhere to go. But, the net flow of node <span class="math inline">\(B\)</span> will not change if we just decrease its inflow from another edge by 3 to compensate for our increase. Of course, if we do this, by (for example) decreasing the flow along edge <span class="math inline">\((C,B)\)</span>, we will have to increase the flow along some edge coming out of node <span class="math inline">\(C\)</span>, so that the net flow out of <span class="math inline">\(C\)</span> does not change either. This is shown below.</p>
 <div class="figure">
@@ -82,7 +83,28 @@
 <blockquote>
 <p>An augmenting path goes along forward edges with non-zero residual capacity and backward edges with non-zero flow. The bottleneck capacity of the augmenting path is the smallest residual capacity of a forward edge or smallest flow of a backward edge (whichever is smallest). We increase the flow on forward edges by that amount and decrease it on backward edges by that amount do to our maximum augmentation of flow on the augmenting path.</p>
 </blockquote>
-<p>Now we have a better definition of an augmenting path. The new definition lets us go backward along edges which, effectively, serves to redistribute flow and avoid the problems faced by the first algorithm we tried. Let’s see if using the same strategy as before, but with the new definition of an augmenting path, can get us the optimal max flow on s-t graph we tried our first algorithm on.</p>
+<p>Now we have a better definition of an augmenting path. The new definition lets us go backward along edges which, effectively, serves to redistribute flow and avoid the problems faced by the first algorithm we tried. Let’s see if by using the same strategy as before, but with the new definition of an augmenting path, we can get the optimal max flow on the s-t graph we tried our first algorithm on.</p>
 <h2 id="a-second-attempt-at-an-algorithm">A Second Attempt at an Algorithm</h2>
+<p>Here is a picture of the s-t graph (a.k.a. flow network) before we add any flow:</p>
+<div class="figure">
+<img src="backpath3.png" />
+
+</div>
+<p>The first augmenting path we find is <span class="math inline">\(S \rightarrow A \rightarrow C \rightarrow T\)</span>. It’s bottleneck capacity is 20 so we augment all edge flows on the path by that amount. Here is a picture of that:</p>
+<div class="figure">
+<img src="backpath4.png" />
+
+</div>
+<p>The second and final augmenting path that we find is <span class="math inline">\(S \rightarrow C \rightarrow A \rightarrow T\)</span>. It’s bottleneck capacity is 10 so we do the appropriate flow augmentation along the path. Shown below:</p>
+<div class="figure">
+<img src="backpath5.png" />
+
+</div>
+<p>It looks like the same algorithm with the improved definition of augmenting paths worked. We got the optimal flow of 30. To recap, the algorithm is: Find an augmenting path and increase the flow along its edges by its bottleneck capacity. Repeat until no augmenting paths.</p>
+<p>We’re almost done but we still haven’t discussed the best strategy of finding augmenting paths. In the example we just went through, I went ahead and asserted that the first augmenting path that was found was <span class="math inline">\(S \rightarrow A \rightarrow C \rightarrow T\)</span>. But why not <span class="math inline">\(S \rightarrow C \rightarrow T\)</span>? Or <span class="math inline">\(S \rightarrow A \rightarrow T\)</span>?</p>
+<h2 id="finding-augmenting-paths">Finding Augmenting Paths</h2>
+<p>It’s easy enough to see that no matter what strategy we use to find augmenting paths, as long as we augment until there are no augmenting paths left we will always produce the max flow. But, we can also see that the strategy we use can have an effect on <em>how quickly</em> we find the max flow of the flow network.</p>
+<p>In the example from the last section, it only took 2 paths if we chose the paths <span class="math inline">\(S \rightarrow A \rightarrow C \rightarrow T\)</span> and <span class="math inline">\(S \rightarrow C \rightarrow A \rightarrow T\)</span>. It would have taken 3 if we had chosen <span class="math inline">\(S \rightarrow A \rightarrow T\)</span> then <span class="math inline">\(S rightarrow C \rightarrow T\)</span> then <span class="math inline">\(S \rightarrow A \rightarrow C \rightarrow T\)</span>. So what’s a good way of choosing paths?</p>
+<p>Consider that the two most obviously reasonable choices are: always pick the augmenting path with the greatest bottleneck capacity or always pick the augmenting path with the shortest number of edges. In the example we just did, the faster choice would have been to pick the augmenting path with the greatest bottleneck capacity, which would have given us the two-path solution. In fact, which strategy of the two strategies (or any other strategies you can think of) depends on the special properties of the flow network (if any) whose max flow you’re trying to find. In general, it’s usually considered best to choose the shortest augmenting path first. This is also convenient because it can be found with a simple breadth-first search.</p>
 </body>
 </html>
