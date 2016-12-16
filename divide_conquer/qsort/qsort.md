@@ -14,20 +14,20 @@ rearrange the array so that all the elements less than the pivot are to the left
 it and all elements greater than it are to its right.  
 
 I can already here you saying, "but - but, just because all the elements to the left of  
-the pivot are less than it and those to the right are more than it does not mean that the  
+the pivot are less than it and those to the right are greater than it does not mean that the  
 array is sorted!".  You're absolutely right.  However, you must recall that we are using  
 this 'choose pivot and rearrange' strategy *recursively*.  So, for our two subarrays  
 where the first has only elements less than the pivot and the second has only elements  
 greater than it, we then pick a pivot *within each subarray* and apply the strategy once  
-more *to each subarray*.  So, by the end, our first pivot is to the right of and greater  
-than a sorted left-subarray, and is to the left and less than a sorted right-subarray.  Thus,  
-the array is sorted.  
+more *to each subarray*.  And so on until we're at subarrays of size 1.  So, by the end, our  
+first pivot is to the right of and greater than a sorted left-subarray, and is to the left  
+and less than a sorted right-subarray.  Thus, the array is sorted.  
 
 ## How is it so fast?  
 
 If you continuously pick the largest element as the pivot, then clearly Quicksort will run  
 in $O(n^2)$.  This is because you'll be repeatedly taking the largest element in the array  
-and putting it at the far right of the (soont-to-be) left subarray - and then repeating this  
+and putting it at the far right of the (soon-to-be) left subarray - and then repeating this  
 recursively for the left subarray.  This looks just like Selection Sort!  
 
 So, the speed of Quicksort depends on the quality of the choice of pivot.  If we can just pick  
@@ -72,7 +72,7 @@ to maintain the $O(n\ log(n))$.  However, using MoM can **guarantee** that the r
 $O(n\ log(n))$ -- in other words, MoM guarantees that no 'perfectly bad array' can be built to  
 degrade the Big-O of Quicksort.  
 
-*note: the Median of Medians algorithm is covered in the 'medianOfMedian' notes*  
+*note: the Median of Medians algorithm is covered in the [QuickSelect](../qselect/qselect.html) notes*  
 
 ## Implementation  
 

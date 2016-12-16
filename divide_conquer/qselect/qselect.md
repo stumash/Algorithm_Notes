@@ -87,3 +87,22 @@ Therefore, the recurrence relation of Quicksort is $T(n) = T(ceil({n \over 5})) 
 By some sneaky involved math (proof by the Substitution Method), that recurrence relation solves  
 to $T(n) = O(n)$.  For more information, check out [this document](mit_qselect.pdf) from which I stole all the  
 diagrams and reasonings.
+
+## Quick Intuition of Running Time  
+
+You don't really need all that to get a quick and dirty intuition of how QuickSelect, a recursive algorithm, runs in linear time.  The whole long blurb above basically just serves as proof of two things:  
+
+1.  We can get a element that's a quantifiably close to the median element in linear time.
+2.  Knowing this quantification of closeness we can prove that QuickSelect as a whole runs in linear time.  
+
+But most people are willing to just accept that there's some fancy method being able to get something close to the median in linear time and that the actual interesting part of QuickSelect is why that means QuickSelect as a whole runs in linear time.  
+
+So what I'm going to show here is that if we can assume that finding the median takes linear time and rearranging using the median as pivot takes linear time then it's actually pretty clear that QuickSort is linear.  I'll then leave it to you to convince yourself that you can in fact get something *quantifiably close enough to the median* in linear time so that the intuition I'll now provide still holds.  
+
+So given our two assumptions, why is QuickSelect $O(n)$?  Well let's run through it's execution.  
+
+First we get the median in $O(n)$ and rearrange the array into two subarrays using the median as pivot in $O(n)$.  Two operations that are $O(n)$ is still $O(n)$.  The $k^{th}$ smallest element will be in one of the two subarrays so we'll repeat on one of the subarrays.  Since the pivot is the perfect median the subarrays are of size exactly $n \over 2$.  Therefore the next round of median finding and rearranging is going to be $O({n \over 2})$.  If we have to recurse again then the next round will be $O({n \over 4})$.  I think you get the idea.  This is a geometric whose value we know:  
+
+$$
+n\ +\ \sum_{i=1}^{\infty} {1 \over {2^i}}\ = n\ +\ n\ =\ 2 n\ =\ O(n)
+$$

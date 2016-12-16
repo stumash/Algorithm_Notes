@@ -14,6 +14,7 @@
 <ul>
 <li><a href="#the-quickselect-algorithm">The Quickselect algorithm</a></li>
 <li><a href="#running-time">Running time</a></li>
+<li><a href="#quick-intuition-of-running-time">Quick Intuition of Running Time</a></li>
 </ul>
 </div>
 <h2 id="the-quickselect-algorithm">The Quickselect algorithm</h2>
@@ -93,5 +94,18 @@ upper bound! So we finally have our upper bound on the size of these subarrays, 
 <p>By some sneaky involved math (proof by the Substitution Method), that recurrence relation solves<br />
 to <span class="math inline">\(T(n) = O(n)\)</span>. For more information, check out <a href="mit_qselect.pdf">this document</a> from which I stole all the<br />
 diagrams and reasonings.</p>
+<h2 id="quick-intuition-of-running-time">Quick Intuition of Running Time</h2>
+<p>You don’t really need all that to get a quick and dirty intuition of how QuickSelect, a recursive algorithm, runs in linear time. The whole long blurb above basically just serves as proof of two things:</p>
+<ol style="list-style-type: decimal">
+<li>We can get a element that’s a quantifiably close to the median element in linear time.</li>
+<li>Knowing this quantification of closeness we can prove that QuickSelect as a whole runs in linear time.</li>
+</ol>
+<p>But most people are willing to just accept that there’s some fancy method being able to get something close to the median in linear time and that the actual interesting part of QuickSelect is why that means QuickSelect as a whole runs in linear time.</p>
+<p>So what I’m going to show here is that if we can assume that finding the median takes linear time and rearranging using the median as pivot takes linear time then it’s actually pretty clear that QuickSort is linear. I’ll then leave it to you to convince yourself that you can in fact get something <em>quantifiably close enough to the median</em> in linear time so that the intuition I’ll now provide still holds.</p>
+<p>So given our two assumptions, why is QuickSelect <span class="math inline">\(O(n)\)</span>? Well let’s run through it’s execution.</p>
+<p>First we get the median in <span class="math inline">\(O(n)\)</span> and rearrange the array into two subarrays using the median as pivot in <span class="math inline">\(O(n)\)</span>. Two operations that are <span class="math inline">\(O(n)\)</span> is still <span class="math inline">\(O(n)\)</span>. The <span class="math inline">\(k^{th}\)</span> smallest element will be in one of the two subarrays so we’ll repeat on one of the subarrays. Since the pivot is the perfect median the subarrays are of size exactly <span class="math inline">\(n \over 2\)</span>. Therefore the next round of median finding and rearranging is going to be <span class="math inline">\(O({n \over 2})\)</span>. If we have to recurse again then the next round will be <span class="math inline">\(O({n \over 4})\)</span>. I think you get the idea. This is a geometric whose value we know:</p>
+<p><span class="math display">\[
+n\ +\ \sum_{i=1}^{\infty} {1 \over {2^i}}\ = n\ +\ n\ =\ 2 n\ =\ O(n)
+\]</span></p>
 </body>
 </html>
