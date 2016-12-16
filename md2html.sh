@@ -9,12 +9,14 @@ function pandochtmlmath_local() {
 
 # run pandochtmlmath on every .md in the directory tree
 find $(pwd) -regextype posix-extended -regex '.*\.md$' |
-while read fl; do
-    if [ "$fl" != "$(realpath README.md)" ]; then
-        pandochtmlmath_local $fl
-        HTMLFILENAME=$(echo $fl | sed 's/\.md/.html/')
-        CSSPATH=$(realpath --relative-to=$fl pandoc.css)
+while read FL; do
+    if [ "$FL" != "$(realpath README.md)" ]; then
+        pandochtmlmath_local $FL
+        HTMLFILENAME=$(echo $FL | sed 's/\.md/.html/')
+
+        # must use dirname for realpath for correct results
+        FLDIR=$(dirname $FL)
+        CSSPATH=$(realpath --relative-to=$FLDIR pandoc.css)
         sed -i "s#pandoc\.css#$CSSPATH#" $HTMLFILENAME
-        sed -i -r 's#\.\./(.*pandoc\.css)#\1#' $HTMLFILENAME
     fi
 done
