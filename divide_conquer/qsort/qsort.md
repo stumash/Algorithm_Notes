@@ -19,22 +19,26 @@ array is sorted!".  You're absolutely right.  However, you must recall that we a
 this 'choose pivot and rearrange' strategy *recursively*.  So, for our two subarrays  
 where the first has only elements less than the pivot and the second has only elements  
 greater than it, we then pick a pivot *within each subarray* and apply the strategy once  
-more *to each subarray*.  And so on until we're at subarrays of size 1.  So, by the end, our  
-first pivot is to the right of and greater than a sorted left-subarray, and is to the left  
+more *to each subarray*.  We repeat until we're at subarrays of size 1.  So, by the end, our  
+first pivot is to the right of and greater than a sorted left-subarray, and is to the left of  
 and less than a sorted right-subarray.  Thus, the array is sorted.  
 
 ## How is it so fast?  
 
 If you continuously pick the largest element as the pivot, then clearly Quicksort will run  
 in $O(n^2)$.  This is because you'll be repeatedly taking the largest element in the array  
-and putting it at the far right of the (soon-to-be) left subarray - and then repeating this  
-recursively for the left subarray.  This looks just like Selection Sort!  
+and putting it at the far right of the left subarray - and then repeating this recursively  
+for the left subarray.  This looks just like Selection Sort!  
 
 So, the speed of Quicksort depends on the quality of the choice of pivot.  If we can just pick  
 a pivot that is roughly the median, then Quicksort will split the array into two subarrays of  
 roughly the same size, kinda like Mergesort.  If we do that, Quicksort runs in $O(n\ log(n))$  
-time.  So, we now understand the idea of quicksort and how we can get it to be fast.  We're  
-left with only one issue:  
+time.  This is because we're doing a partition step that runs in $O(n)$ as many times as we can  
+break up the array into two halves which is $O(log(n))$.  So that's $n \cdot \log(n)$ operaations  
+for $O(n \log(n))$.  
+
+So, we now understand the idea of quicksort and how we can get it to be fast.  We're left with  
+only one issue:  
 
 ## How to choose a good pivot quickly  
 

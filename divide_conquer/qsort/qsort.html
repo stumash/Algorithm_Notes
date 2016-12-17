@@ -36,19 +36,22 @@ array is sorted!”. You’re absolutely right. However, you must recall that we
 this ‘choose pivot and rearrange’ strategy <em>recursively</em>. So, for our two subarrays<br />
 where the first has only elements less than the pivot and the second has only elements<br />
 greater than it, we then pick a pivot <em>within each subarray</em> and apply the strategy once<br />
-more <em>to each subarray</em>. And so on until we’re at subarrays of size 1. So, by the end, our<br />
-first pivot is to the right of and greater than a sorted left-subarray, and is to the left<br />
+more <em>to each subarray</em>. We repeat until we’re at subarrays of size 1. So, by the end, our<br />
+first pivot is to the right of and greater than a sorted left-subarray, and is to the left of<br />
 and less than a sorted right-subarray. Thus, the array is sorted.</p>
 <h2 id="how-is-it-so-fast">How is it so fast?</h2>
 <p>If you continuously pick the largest element as the pivot, then clearly Quicksort will run<br />
 in <span class="math inline">\(O(n^2)\)</span>. This is because you’ll be repeatedly taking the largest element in the array<br />
-and putting it at the far right of the (soon-to-be) left subarray - and then repeating this<br />
-recursively for the left subarray. This looks just like Selection Sort!</p>
+and putting it at the far right of the left subarray - and then repeating this recursively<br />
+for the left subarray. This looks just like Selection Sort!</p>
 <p>So, the speed of Quicksort depends on the quality of the choice of pivot. If we can just pick<br />
 a pivot that is roughly the median, then Quicksort will split the array into two subarrays of<br />
 roughly the same size, kinda like Mergesort. If we do that, Quicksort runs in <span class="math inline">\(O(n\ log(n))\)</span><br />
-time. So, we now understand the idea of quicksort and how we can get it to be fast. We’re<br />
-left with only one issue:</p>
+time. This is because we’re doing a partition step that runs in <span class="math inline">\(O(n)\)</span> as many times as we can<br />
+break up the array into two halves which is <span class="math inline">\(O(log(n))\)</span>. So that’s <span class="math inline">\(n \cdot \log(n)\)</span> operaations<br />
+for <span class="math inline">\(O(n \log(n))\)</span>.</p>
+<p>So, we now understand the idea of quicksort and how we can get it to be fast. We’re left with<br />
+only one issue:</p>
 <h2 id="how-to-choose-a-good-pivot-quickly">How to choose a good pivot quickly</h2>
 <p>As we saw, to get Quicksort to run in <span class="math inline">\(O(n\ log(n))\)</span> time, all we need is to pick pivots that<br />
 <em>almost always</em> are <em>almost the median</em>. How do we do that?</p>

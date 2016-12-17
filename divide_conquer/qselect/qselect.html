@@ -12,13 +12,13 @@
 <body>
 <div id="TOC">
 <ul>
-<li><a href="#the-quickselect-algorithm">The Quickselect algorithm</a></li>
+<li><a href="#the-quickselect-algorithm">The QuickSelect algorithm</a></li>
 <li><a href="#running-time">Running time</a></li>
 <li><a href="#quick-intuition-of-running-time">Quick Intuition of Running Time</a></li>
 </ul>
 </div>
-<h2 id="the-quickselect-algorithm">The Quickselect algorithm</h2>
-<p>The goal of the Quickselect algorithm is simple: quickly select the <span class="math inline">\(k^{th}\)</span> smallest element in an<br />
+<h2 id="the-quickselect-algorithm">The QuickSelect algorithm</h2>
+<p>The goal of the QuickSelect algorithm is simple: quickly select the <span class="math inline">\(k^{th}\)</span> smallest element in an<br />
 unsorted array of <span class="math inline">\(n\)</span> elements. Note that the <span class="math inline">\(({n \over 2})^{th}\)</span> smallest element is the median.</p>
 <p>Lucky for me, a detailed explanation of how the algorithm works has already been<br />
 provided by MIT in this really good picture, so I don’t need to explain that at<br />
@@ -40,25 +40,26 @@ exactly 5 elements, a constant number of elements, running a sorting algorithm o
 constant time <span class="math inline">\(O(1)\)</span>. So, if we are doing an operation that’s <span class="math inline">\(O(1)\)</span> for <span class="math inline">\(n \over 5\)</span> groups, then<br />
 sorting all of those groups will take <span class="math inline">\(O(n)\)</span>. Once all the 5-element subgroups are sorted, let’s<br />
 make a set of all their medians.</p>
-<p>Now we’re going find the median of medians by calling Quickselect recursively on our set of medians.<br />
-Since there were <span class="math inline">\(n \over 5\)</span> groups of 5 elements, there are also <span class="math inline">\(n \over 5\)</span> medians from which to find the median of medians. Therefore using Quickselect recursively on our set of medians will take <span class="math inline">\(T({n \over 5})\)</span>. Let’s<br />
+<p>Now we’re going find the median of medians by calling QuickSelect recursively on our set of medians.<br />
+Since there were <span class="math inline">\(n \over 5\)</span> groups of 5 elements, there are also <span class="math inline">\(n \over 5\)</span> medians from which to find the median of medians. Therefore using QuickSelect recursively on our set of medians will take <span class="math inline">\(T({n \over 5})\)</span>. Let’s<br />
 remember that for our recurrence relation much later and for now just assume we have the median of medians.</p>
 <p>With our median of medians that we just got, we’re going to partition the array just like we did in<br />
-Quicksort, using the median of medians as the pivot: we’re going to put all elements less than the<br />
+QuickSort, using the median of medians as the pivot: we’re going to put all elements less than the<br />
 pivot to its left and all elements greater than it to its right. If you don’t remember how that’s done<br />
-take a look at the <a href="../qsort/qsort.html">notes on Quicksort</a>. At this point we’ve got the array partitioned as shown in<br />
+take a look at the <a href="../qsort/qsort.html">notes on QuickSort</a>. At this point we’ve got the array partitioned as shown in<br />
 the first diagram, so all that remains is the recurive call. But to figure out the Big-O of the recursive<br />
-call, we have to figure out the size of the sub-array we’re going to call Quickselect on recursively.</p>
-<p>Remember that we are using Quickselect to get us the <span class="math inline">\(k^{th}\)</span> smallest element. So, if, after<br />
-partitioning using the median of medians, the position of our pivot is greater than k, we clearly<br />
-have to call Quicksort on the subarray that’s less than the pivot. Converserly, if, after<br />
-partitioning, the position <span class="math inline">\(p\)</span> of our pivot is less than k, we have to call Quicksort on the subarray<br />
-that’s greater than the pivot – but now we’re looking for the <span class="math inline">\({(p-k)}^{th}\)</span> element in that subarray<br />
-since all the elements in the subarray are greater than the <span class="math inline">\(p^{th}\)</span> smallest element in our original<br />
-array and we were looking for the <span class="math inline">\(k^{th}\)</span> smallest element in our original array.</p>
-<p>So, now that we understand something about how we’ll call Quickselect recursively on one of the two<br />
+call, we have to figure out the size of the sub-array we’re going to call QuickSelect on recursively.</p>
+<p>Remember that we are using QuickSelect to get us the <span class="math inline">\(k^{th}\)</span> smallest element. So, if after<br />
+partitioning using the median of medians, the position <span class="math inline">\(p\)</span> of our pivot is greater than k, we clearly<br />
+have to call Quicksort on the subarray that’s less than the pivot (realize that the pivot is both at<br />
+position <span class="math inline">\(p\)</span> <strong>and</strong> is the <span class="math inline">\(p^{th}\)</span> smallest element since we partitioned around it). Converserly,<br />
+if, after partitioning, <span class="math inline">\(p\)</span> is less than k, we have to call Quicksort on the subarray that’s greater<br />
+than the pivot – but now we’re looking for the <span class="math inline">\({(p-k)}^{th}\)</span> element in that subarray since all the<br />
+elements in the subarray are greater than the <span class="math inline">\(p^{th}\)</span> smallest element in our original array and we<br />
+were looking for the <span class="math inline">\(k^{th}\)</span> smallest element in our original array.</p>
+<p>So, now that we understand something about how we’ll call QuickSelect recursively on one of the two<br />
 subarrays, how do we put an upper bound on their size that’s useful for a recurrence relation so<br />
-that we can understand Quickselect’s Big-O? Realize that putting an upper bound on the size of these<br />
+that we can calculate QuickSelect’s Big-O? Realize that putting an upper bound on the size of these<br />
 subarrays is equivalent to putting an upper bound on the number of elements that are greater than or less<br />
 than the median of medians. Let’s start with another great picture from MIT to get us all using the same<br />
 visualization:</p>
@@ -100,12 +101,12 @@ diagrams and reasonings.</p>
 <li>We can get a element that’s a quantifiably close to the median element in linear time.</li>
 <li>Knowing this quantification of closeness we can prove that QuickSelect as a whole runs in linear time.</li>
 </ol>
-<p>But most people are willing to just accept that there’s some fancy method being able to get something close to the median in linear time and that the actual interesting part of QuickSelect is why that means QuickSelect as a whole runs in linear time.</p>
-<p>So what I’m going to show here is that if we can assume that finding the median takes linear time and rearranging using the median as pivot takes linear time then it’s actually pretty clear that QuickSort is linear. I’ll then leave it to you to convince yourself that you can in fact get something <em>quantifiably close enough to the median</em> in linear time so that the intuition I’ll now provide still holds.</p>
+<p>But most people are willing to just accept that there’s some fancy method that’s able to get something close to the median in linear time and that the actual interesting part of QuickSelect is <strong>why that means QuickSelect as a whole runs in linear time</strong>.</p>
+<p>So what I’m going to show here is that if we can assume that finding the median takes linear time and rearranging using the median as pivot takes linear time then it’s actually pretty clear that QuickSort also takes linear time. I’ll then leave it to you to convince yourself that you can in fact get something <em>quantifiably close enough to the median</em> in linear time so that the intuition I’ll now provide still holds.</p>
 <p>So given our two assumptions, why is QuickSelect <span class="math inline">\(O(n)\)</span>? Well let’s run through it’s execution.</p>
 <p>First we get the median in <span class="math inline">\(O(n)\)</span> and rearrange the array into two subarrays using the median as pivot in <span class="math inline">\(O(n)\)</span>. Two operations that are <span class="math inline">\(O(n)\)</span> is still <span class="math inline">\(O(n)\)</span>. The <span class="math inline">\(k^{th}\)</span> smallest element will be in one of the two subarrays so we’ll repeat on one of the subarrays. Since the pivot is the perfect median the subarrays are of size exactly <span class="math inline">\(n \over 2\)</span>. Therefore the next round of median finding and rearranging is going to be <span class="math inline">\(O({n \over 2})\)</span>. If we have to recurse again then the next round will be <span class="math inline">\(O({n \over 4})\)</span>. I think you get the idea. This is a geometric whose value we know:</p>
 <p><span class="math display">\[
-n\ +\ \sum_{i=1}^{\infty} {1 \over {2^i}}\ = n\ +\ n\ =\ 2 n\ =\ O(n)
+n\ +\ \sum_{i=1}^{\infty} {1 \over {2^i}}\ =\ n\ +\ n\ =\ 2 n\ =\ O(n)
 \]</span></p>
 </body>
 </html>
