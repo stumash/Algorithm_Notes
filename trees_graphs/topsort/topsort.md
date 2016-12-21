@@ -20,10 +20,10 @@ and a valid topological ordering of the graph.
 
 ## Topological Sorting  
 
-The main idea in producing a topological ordering is to collect the leaf nodes and realize  
-that we should stick them at the end of our ordering right off the bat.  That way they  
-automatically will come after their ancestors and they don't have any descendants that  
-we need to avoid putting before them.  
+The main idea in producing a topological ordering is to do a graph traversal while collecting  
+the search tree leaf nodes and realize that we should stick them at the end of our ordering  
+right off the bat.  That way they'll automatically come after their ancestors and leaf nodes  
+don't have any descendants that we need to avoid putting before them in our ordering.  
 
 Well, it's a little more complicated than that but that's a crucial idea.  In the end, a  
 topological sort amounts to doing a depth first search with the added condition that  

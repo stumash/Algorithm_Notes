@@ -34,10 +34,10 @@ and a valid topological ordering of the graph.</p>
 
 </div>
 <h2 id="topological-sorting">Topological Sorting</h2>
-<p>The main idea in producing a topological ordering is to collect the leaf nodes and realize<br />
-that we should stick them at the end of our ordering right off the bat. That way they<br />
-automatically will come after their ancestors and they don’t have any descendants that<br />
-we need to avoid putting before them.</p>
+<p>The main idea in producing a topological ordering is to do a graph traversal while collecting<br />
+the search tree leaf nodes and realize that we should stick them at the end of our ordering<br />
+right off the bat. That way they’ll automatically come after their ancestors and leaf nodes<br />
+don’t have any descendants that we need to avoid putting before them in our ordering.</p>
 <p>Well, it’s a little more complicated than that but that’s a crucial idea. In the end, a<br />
 topological sort amounts to doing a depth first search with the added condition that<br />
 every time we reach a node that has no edges leading to any other yet-unvisited node, we<br />
