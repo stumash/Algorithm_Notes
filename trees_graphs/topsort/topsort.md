@@ -8,8 +8,8 @@ A topological ordering of a DAG is an ordered list of the DAG's vertices where n
 $n_j$ that can be reached by some path from node $n_i$ appears before node $n_i$ in  
 the ordering.  
 
-One way to think of it is that in a DAG, if you can get to one node $c$ by starting at  
-another node $p$, then in a sense $p$ is kind of like one of $c$'s ancestor nodes. So the  
+One way to think of it is that in a DAG, if you can get to one node $d$ by starting at  
+another node $p$, then in a sense $p$ is kind of like one of $d$'s ancestor nodes. So the  
 rule for a topological ordering is that all ancestors must appear before their descendants  
 in the topological ordering.  
 
