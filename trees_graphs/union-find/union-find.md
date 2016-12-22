@@ -2,6 +2,10 @@
 
 Honestly, I don't think you can get a better explanation of how this works than you in [these youtube videos](https://www.youtube.com/watch?v=8mYfZeHtdNc&list=PLe-ggMe31CTexoNYnMhbHaWhQ0dvcy43t&index=1) which are lectures from the series by Roger Sedgewick that I mentioned at the top of the home page of these notes.  
 
+## MakeSet operation
+
+The `makeset(e)` operation takes an element and makes a singleton set out of it.  In practice, uses of the union-find data structure first apply the MakeSet operation to every element in some collection before continuing to execute the rest of whatever algorithm the union-find data structure is being used in.  
+
 ## Find operation
 
 The `find(ei,ej)` operation will take two elements $e_i$ and $e_j$ and determine if they are connected in the union-find data structure.  The union-find data structure works by storing mutiple disjoint sets so the find operation really just amounts to checking if the two elements are in the same set.  
