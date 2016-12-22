@@ -32,7 +32,7 @@ These notes were made possible by the great explanations of certain educators wh
 
 [Interval Scheduling](greedy/intervals/intervals.html)  
 
-[Dijkstra's Shortest Path](greedy/shortestDijkstra/shortestDijkstra.html)  
+[Dijkstra's Shortest Path](greedy/dijkstra/shortestDijkstra.html)  
 
 [Minimum Spanning Tree](greedy/mst/mst.html)  
 
