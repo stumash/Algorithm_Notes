@@ -21,13 +21,27 @@
 <p>Given a edge-weighted and directed graph, find the shortest path between any two nodes <code>s</code> and <code>t</code>. We should all be well aquainted with this problem from the <a href="../../greedy/dijkstra/shortestDijkstra.html">notes on Dijkstra’s shortest path algorithm</a>.</p>
 <h2 id="negative-cycles">Negative Cycles</h2>
 <p>We already saw that Dijkstra’s Algorithm fails on graphs with negative edge weights, but this time we’re going to show some dynamic programming solutions to the Shortest Path problem that allow the graph to contain negative edge weights. However, we first need to discuss a case that can arise in a graph with negative edge weights that <strong>no shortest path algorithm can handle</strong>: the case of negative cycles.</p>
-<p>The idea is simple: somewhere in the graph, there exists a cycle for which the sum of its component edges’ weights <strong>is negative</strong>. This means that if we had some path between two nodes <span class="math inline">\(s\)</span> and <span class="math inline">\(t\)</span> not on the cycle, if the path chose to go around the cycle as many times as it wanted it could hypothetically have a path length of <strong>negative infinity</strong>. This is clearly not valid. The issue here is not so much that no algorithm can come up with ways to combat this issue, but rather than there is no good way to define path length when one of these negative cycles exists. So, we come to the following conclusion:</p>
+<p>The idea is simple: somewhere in the graph, there exists a cycle whose edge-weights sum to a negative number. This means that if we had some path between two nodes <span class="math inline">\(s\)</span> and <span class="math inline">\(t\)</span> not on the cycle, if the path chose to go around the cycle as many times as it wanted it could hypothetically have a path length of <strong>negative infinity</strong>. This is clearly not valid. The issue here is not so much that no algorithm can come up with ways to combat this issue, but rather than there is no good way to define path length when one of these negative cycles exists. So, we come to the following conclusion:</p>
 <blockquote>
-<p>If some path from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> contains a negative weight cycle, there does not exist a shortest <span class="math inline">\(s \rightarrow t\)</span> path. Otherwise, there does exist such a path and it is ‘simple’ (no repeated vertices).</p>
+<p>If some path from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> contains a negative cycle, there does not exist a shortest <span class="math inline">\(s \rightarrow t\)</span> path (by the standard definition – of course you might be able to write some custom algorithm that still finds the shortest path). Otherwise, there does exist such a path and it is ‘simple’ (no repeated vertices).</p>
 </blockquote>
 <p>Something to note: a simple path can visit at most <span class="math inline">\(|V|\)</span> number of vertices, and that path will therefore necessarily have <span class="math inline">\(|V| - 1\)</span> edges. Therefore, the max number of edges in any shortest <span class="math inline">\(s \rightarrow t\)</span> path is <span class="math inline">\(|V| - 1\)</span>.</p>
 <h2 id="recursive-definition-of-optimal-solution">Recursive Definition of Optimal Solution</h2>
-<p>This is the general strategy of dynamic programming as discussed in <a href="../weighted_intervals/weighted_interval.html">the notes on weighted interval scheduling</a>, which was the first dynamic programming problem that we looked at.</p>
+<p>As discussed in <a href="../weighted_intervals/weighted_interval.html">the notes on weighted interval scheduling</a>, the general strategy of dynamic programming is to first make a recursive definition of the optimal solution and then to implement it either bottom-up or top-down. Before reading on, recall that the length of the shortest path between to nodes is not defined by the number of edges in the shortest path but rather the sum of their weights.</p>
+<p>The Bellman-Ford algorithm relies on two principles to justify its dynamic programming recurrence:</p>
+<ol style="list-style-type: decimal">
+<li>For any node <span class="math inline">\(v\)</span>, the shortest <span class="math inline">\(s \rightarrow v\)</span> path cannot consist of more than <span class="math inline">\(|V|-1\)</span> edges.<br />
+</li>
+<li>Though we cannot define a recurrence for any shortest <span class="math inline">\(s \rightarrow v\)</span> path, <strong>we can</strong> define the recurrence for length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path . That recurrence is:</li>
+</ol>
+<div class="figure">
+<img src="def_opt.png" />
+
+</div>
+<div class="figure">
+<img src="def_opt2.png" />
+
+</div>
 <p><strong>INCOMPLETE</strong></p>
 </body>
 </html>
