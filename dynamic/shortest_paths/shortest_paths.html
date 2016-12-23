@@ -17,12 +17,14 @@
 <li><a href="#recursive-definition-of-optimal-solution">Recursive Definition of Optimal Solution</a></li>
 <li><a href="#the-bellman-ford-algorithm">The Bellman-Ford Algorithm</a></li>
 <li><a href="#big-o-of-space-and-time">Big O of Space and Time</a></li>
+<li><a href="#practical-improvements">Practical Improvements</a></li>
+<li><a href="#using-bellman-ford-to-detect-negative-cycles">Using Bellman-Ford to Detect Negative Cycles</a></li>
 </ul>
 </div>
 <h2 id="the-shortest-path-problem">The Shortest Path Problem</h2>
 <p>Given a edge-weighted and directed graph, find the shortest path between any two nodes <code>s</code> and <code>t</code>. We should all be well aquainted with this problem from the <a href="../../greedy/dijkstra/shortestDijkstra.html">notes on Dijkstra’s shortest path algorithm</a>.</p>
 <h2 id="negative-cycles">Negative Cycles</h2>
-<p>We already saw that Dijkstra’s Algorithm fails on graphs with negative edge weights, but this time we’re going to show some dynamic programming solutions to the Shortest Path problem that allow the graph to contain negative edge weights. However, we first need to discuss a case that can arise in a graph with negative edge weights that <strong>no shortest path algorithm can handle</strong>: the case of negative cycles.</p>
+<p>We already saw that Dijkstra’s Algorithm fails on DAGs with negative edge weights, but this time we’re going to show some dynamic programming solutions to the Shortest Path problem that allow the DAG to contain negative edge weights. However, we first need to discuss a case that can arise in a graph with negative edge weights that <strong>no shortest path algorithm can handle</strong>: the case of negative cycles.</p>
 <p>The idea is simple: somewhere in the graph, there exists a cycle whose edge-weights sum to a negative number. This means that if we had some path between two nodes <span class="math inline">\(s\)</span> and <span class="math inline">\(t\)</span> not on the cycle, if the path chose to go around the cycle as many times as it wanted it could hypothetically have a path length of <strong>negative infinity</strong>. This is clearly not valid. The issue here is not so much that no algorithm can come up with ways to combat this issue, but rather than there is no good way to define path length when one of these negative cycles exists. So, we come to the following conclusion:</p>
 <blockquote>
 <p>If some path from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> contains a negative cycle, there does not exist a shortest <span class="math inline">\(s \rightarrow t\)</span> path (by the standard definition – of course you might be able to write some custom algorithm that still finds the shortest path ignoring negative cycles). Otherwise, there does exist such a path and it is ‘simple’ (no repeated vertices).</p>
@@ -52,7 +54,7 @@
 <ol style="list-style-type: decimal">
 <li>The shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> in at most <span class="math inline">\(i\)</span> edges is actually the shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> in at most <span class="math inline">\(i-1\)</span> edges.<br />
 </li>
-<li>The shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> uses exactly <span class="math inline">\(i\)</span> edges, so we can therefore define the length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path as the minimum of, for all of <span class="math inline">\(v\)</span>’s neighbours <span class="math inline">\(u\)</span>, the sum of the shortest-path-length to <span class="math inline">\(u\)</span> in <span class="math inline">\(i-1\)</span> edges plus the edge weight of edge <span class="math inline">\((u,v)\)</span>. We can obviously only apply this minimization to nodes <span class="math inline">\(u\)</span> that are adjacent to <span class="math inline">\(v\)</span>.</li>
+<li>The shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> uses exactly <span class="math inline">\(i\)</span> edges, so we can therefore define the length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path as the minimum of, for all of <span class="math inline">\(v\)</span>’s neighbours <span class="math inline">\(u\)</span>, the length of the shortest <span class="math inline">\(s \rightarrow u\)</span> path in <span class="math inline">\(i-1\)</span> edges plus the edge weight of edge <span class="math inline">\((u,v)\)</span>. We can obviously only apply this minimization to nodes <span class="math inline">\(u\)</span> that are adjacent to <span class="math inline">\(v\)</span> – a.k.a. forall <span class="math inline">\((u,v) \in E\)</span>.</li>
 </ol>
 <h2 id="the-bellman-ford-algorithm">The Bellman-Ford Algorithm</h2>
 <div class="figure">
@@ -64,7 +66,30 @@
 <img src="bf_demo.png" />
 
 </div>
+<p>Let’s refer to the row as the array <code>r[]</code>, where <code>r[v]</code> is the length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path. To reconstruct the <span class="math inline">\(s \rightarrow v\)</span> path itself you need only the array <code>r[]</code> and a very simple strategy:</p>
+<ul>
+<li>Start at the node <span class="math inline">\(v\)</span> of your choice (so start at <code>r[v]</code>). Push <span class="math inline">\(v\)</span> onto a stack.<br />
+</li>
+<li>Find <span class="math inline">\(v\)</span>’s neighbour <span class="math inline">\(u\)</span> such that <code>r[u]</code> + <span class="math inline">\(w(u,v)\)</span> = <code>r[v]</code>. Now push <span class="math inline">\(u\)</span> onto the stack.<br />
+</li>
+<li>Repeat until you arrive at <span class="math inline">\(s\)</span>, which you also push onto the stack. Now pop the stack until empty to get the shortest <span class="math inline">\(s \rightarrow v\)</span> path.</li>
+</ul>
 <h2 id="big-o-of-space-and-time">Big O of Space and Time</h2>
-<p><strong>INCOMPLETE</strong></p>
+<p>We don’t really need a whole section for this. The matrix <code>DP[][]</code> is <span class="math inline">\(n^2\)</span> so memory complexity is <span class="math inline">\(\Theta ({|V|}^2)\)</span>. Also, we iterate as many times as there are nodes and for each iteration we look at incident edges so that’s time complexity is <span class="math inline">\(\Theta (|V| \cdot |E|)\)</span>. The ‘path reconstruction’ runs in <span class="math inline">\(O(|V| \cdot |E|)\)</span> also.</p>
+<h2 id="practical-improvements">Practical Improvements</h2>
+<p>Notice that as we fill any given row in the matrix, we only ever need to use the previous row. So we should really only be using a single row of size <span class="math inline">\(|V|\)</span> during the entire execution of the algorithm. Also, our reconstruction of the shortest path takes just as long as the algorithm itself, which is not great. This is because in the reconstruction, just as in the regular execution of the algorithm, we have to look at all edges of each node before terminating.</p>
+<p>We can get around this by maintaining an array <code>prev[]</code> with one value for every node such that <code>prev[v]</code> is the node that comes before <span class="math inline">\(v\)</span> in the shortest <span class="math inline">\(s \rightarrow v\)</span> path. Just as the length of the shortest path to a given node <span class="math inline">\(v\)</span> changes as the algorithm runs, so too do the nodes in that path and therefore the value of <code>prev[v]</code> may change during execution. With the array <code>prev[]</code>, we will be able to reconstruct the path very quickly. We just push <span class="math inline">\(v\)</span> onto a stack and then go to <code>prev[v]</code> and repeat until we are at <span class="math inline">\(s\)</span>.</p>
+<p>Here’s what the improved version of the algorithm looks like. Note that while the memory needed is now only <span class="math inline">\(O(|V|)\)</span>, the time needed has not changed. In practice this version is much faster.</p>
+<div class="figure">
+<img src="bf_imp.png" />
+
+</div>
+<h2 id="using-bellman-ford-to-detect-negative-cycles">Using Bellman-Ford to Detect Negative Cycles</h2>
+<p>Recall that no shortest <span class="math inline">\(s \rightarrow v\)</span> path can contain more than <span class="math inline">\(|V|-1\)</span> edges. This is why the outer loop of the Bellman-Ford algorithm iterates <span class="math inline">\(|V|-1\)</span> times. Therefore, all shortest paths should be set in stone by the end of the <span class="math inline">\(|V|-1\)</span> iterations of the outer loop. If we ran the inner loop one last <span class="math inline">\({|V|}^th\)</span> time and any of the shortest paths changed, we would know there’s some kind of structure in this graph that makes the shortest <span class="math inline">\(s \rightarrow v\)</span> path somewhere in the graph <strong>ever-changing</strong>. We know that negative cycles are the only way to cause infinitely-shrinking shortest paths so we have detected a negative cycle.</p>
+<p>To decect negative cycles we therefore run the inner loop one last time and if it would have made any changes we simply output that there have been negative cycles detected.</p>
+<div class="figure">
+<img src="bf_neg.png" />
+
+</div>
 </body>
 </html>
