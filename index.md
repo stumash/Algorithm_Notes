@@ -40,7 +40,7 @@ These notes were made possible by the great explanations of certain educators wh
 
 [Weighted Interval Scheduling](dynamic/weighted_intervals/weighted_interval.html)  
 
-[Bellman-Ford-ish](dynamic/shortest_paths/shortest_paths.html)  
+[Bellman-Ford](dynamic/shortest_paths/shortest_paths.html)  
 
 ## Max Flow  
 
