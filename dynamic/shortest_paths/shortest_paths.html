@@ -15,6 +15,8 @@
 <li><a href="#the-shortest-path-problem">The Shortest Path Problem</a></li>
 <li><a href="#negative-cycles">Negative Cycles</a></li>
 <li><a href="#recursive-definition-of-optimal-solution">Recursive Definition of Optimal Solution</a></li>
+<li><a href="#the-bellman-ford-algorithm">The Bellman-Ford Algorithm</a></li>
+<li><a href="#big-o-of-space-and-time">Big O of Space and Time</a></li>
 </ul>
 </div>
 <h2 id="the-shortest-path-problem">The Shortest Path Problem</h2>
@@ -23,25 +25,46 @@
 <p>We already saw that Dijkstra’s Algorithm fails on graphs with negative edge weights, but this time we’re going to show some dynamic programming solutions to the Shortest Path problem that allow the graph to contain negative edge weights. However, we first need to discuss a case that can arise in a graph with negative edge weights that <strong>no shortest path algorithm can handle</strong>: the case of negative cycles.</p>
 <p>The idea is simple: somewhere in the graph, there exists a cycle whose edge-weights sum to a negative number. This means that if we had some path between two nodes <span class="math inline">\(s\)</span> and <span class="math inline">\(t\)</span> not on the cycle, if the path chose to go around the cycle as many times as it wanted it could hypothetically have a path length of <strong>negative infinity</strong>. This is clearly not valid. The issue here is not so much that no algorithm can come up with ways to combat this issue, but rather than there is no good way to define path length when one of these negative cycles exists. So, we come to the following conclusion:</p>
 <blockquote>
-<p>If some path from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> contains a negative cycle, there does not exist a shortest <span class="math inline">\(s \rightarrow t\)</span> path (by the standard definition – of course you might be able to write some custom algorithm that still finds the shortest path). Otherwise, there does exist such a path and it is ‘simple’ (no repeated vertices).</p>
+<p>If some path from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> contains a negative cycle, there does not exist a shortest <span class="math inline">\(s \rightarrow t\)</span> path (by the standard definition – of course you might be able to write some custom algorithm that still finds the shortest path ignoring negative cycles). Otherwise, there does exist such a path and it is ‘simple’ (no repeated vertices).</p>
 </blockquote>
 <p>Something to note: a simple path can visit at most <span class="math inline">\(|V|\)</span> number of vertices, and that path will therefore necessarily have <span class="math inline">\(|V| - 1\)</span> edges. Therefore, the max number of edges in any shortest <span class="math inline">\(s \rightarrow t\)</span> path is <span class="math inline">\(|V| - 1\)</span>.</p>
 <h2 id="recursive-definition-of-optimal-solution">Recursive Definition of Optimal Solution</h2>
-<p>As discussed in <a href="../weighted_intervals/weighted_interval.html">the notes on weighted interval scheduling</a>, the general strategy of dynamic programming is to first make a recursive definition of the optimal solution and then to implement it either bottom-up or top-down. Before reading on, recall that the length of the shortest path between to nodes is not defined by the number of edges in the shortest path but rather the sum of their weights.</p>
+<p>As discussed in <a href="../weighted_intervals/weighted_interval.html">the notes on weighted interval scheduling</a>, the general strategy of dynamic programming is to first make a recursive definition of the optimal solution and then to implement it either bottom-up or top-down. Before reading on, recall that the length of the shortest path between two nodes is not defined by the number of edges in the shortest path but rather the sum of their weights.</p>
 <p>The Bellman-Ford algorithm relies on two principles to justify its dynamic programming recurrence:</p>
 <ol style="list-style-type: decimal">
 <li>For any node <span class="math inline">\(v\)</span>, the shortest <span class="math inline">\(s \rightarrow v\)</span> path cannot consist of more than <span class="math inline">\(|V|-1\)</span> edges.<br />
 </li>
-<li>Though we cannot define a recurrence for any shortest <span class="math inline">\(s \rightarrow v\)</span> path, <strong>we can</strong> define the recurrence for length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path . That recurrence is:</li>
+<li>Though we cannot define a recurrence for any shortest <span class="math inline">\(s \rightarrow v\)</span> path, <strong>we can</strong> define the recurrence for length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path consisting of <span class="math inline">\(i\)</span> edges or less. That recurrence is:</li>
 </ol>
 <div class="figure">
-<img src="def_opt.png" />
+<img src="def_opt0.png" />
+
+</div>
+<div class="figure">
+<img src="def_opt1.png" />
 
 </div>
 <div class="figure">
 <img src="def_opt2.png" />
 
 </div>
+<p>The interesting part of the recurrence is the “otherwise” case, which is defined as the minimum of two cases:</p>
+<ol style="list-style-type: decimal">
+<li>The shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> in at most <span class="math inline">\(i\)</span> edges is actually the shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> in at most <span class="math inline">\(i-1\)</span> edges.<br />
+</li>
+<li>The shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> uses exactly <span class="math inline">\(i\)</span> edges, so we can therefore define the length of the shortest <span class="math inline">\(s \rightarrow v\)</span> path as the minimum of, for all of <span class="math inline">\(v\)</span>’s neighbours <span class="math inline">\(u\)</span>, the sum of the shortest-path-length to <span class="math inline">\(u\)</span> in <span class="math inline">\(i-1\)</span> edges plus the edge weight of edge <span class="math inline">\((u,v)\)</span>. We can obviously only apply this minimization to nodes <span class="math inline">\(u\)</span> that are adjacent to <span class="math inline">\(v\)</span>.</li>
+</ol>
+<h2 id="the-bellman-ford-algorithm">The Bellman-Ford Algorithm</h2>
+<div class="figure">
+<img src="bf_alg.png" />
+
+</div>
+<p>The algorithm returns the last row that it fills in. Here’s a demo of its execution on a simple example:</p>
+<div class="figure">
+<img src="bf_demo.png" />
+
+</div>
+<h2 id="big-o-of-space-and-time">Big O of Space and Time</h2>
 <p><strong>INCOMPLETE</strong></p>
 </body>
 </html>
