@@ -20,7 +20,7 @@ A **cut** of a graph is just a subset of nodes.  A **cycle** of a graph is a sub
 
 ## Graph Properties About Cuts, Cycles and More  
 
-Here's an interesting and (as you'll soon find) very useful fact: **all cutsets and cycles always share an even number of edges** (or none at all, but who cares about the trivial case).  Not that this counts as proof, but here's an example of that being true.  In the following picture, you will not be able to construct any cycles or cutsets for which this property does not hold.  
+Here's an interesting and (as you'll soon find) very useful fact: **all cutsets and cycles pairs always share an even number of edges** (or none at all, but who cares about the trivial case).  Not that this counts as proof, but here's an example of that being true.  In the following picture, you will not be able to construct any cycles or cutsets for which this property does not hold.  
 
 ![](cycle_cutset.png)  
 
@@ -51,15 +51,17 @@ Say we have some graph with MST T\*.  And let's say that edge f is in T\* but is
 
 ## Prim's Algorithm for MST-Building
 
-**Prim's Algorithm** starts at some root node in a graph and builds the MST greedily.  Its rules are very simple: Initialize the set of explored nodes to just the root node.  Add the cheapest edge in the explored-node-set's cutset to the MST until there are no edges in the cutset.  Then the MST will be complete.  Let's think about how to always know which edge is the minimum in the cutset, since that's the only real challenge of designing Prim's Algorithm.  
+**Prim's Algorithm** starts at some root node in a graph and builds the MST greedily.  Its rules are very simple: Initialize the set **S** of explored nodes (nodes that the MST we're building already reaches) to just the root node.  Repeatedly add the cheapest edge in **S**'s cutset to the MST, growing the MST and thus also the set of explored/MST-reachable nodes **S**.  Do this until there are no edges in the cutset because all nodes are in the explored/reachable cut.  At this point the MST will be complete.  
 
-First, we're obviously going to have to maintain a set S of nodes that have been explored.  The other thing we have to maintain is a priority queue Q for the edges in the cutset of S.  Once we know how to maintain this priority queue, the algorithm boils down to adding elements from it into S until the priority queue is empty.  So how do we do it?  
+Clearly the real challenge of Prim's Algorithm is being able to always add the minimum edge in S's cutset to the MST.  Before we explore how we can always know which edge that is, let's first take a moment to discuss the data structure we'll use for **S**.  We want **S** to be fast at two things: checking if a node is in **S** and adding a new node to **S**.  Many data structures can do this for us.  However, we can even use **S** to also store the MST edges themselves!  We do this by using a Map data structure for **S** where the keys are the explored nodes and the values are the edges that connected them to the explored set S when they were first explored/MST-reachable.  Since Prim's works by always adding the cheapest edge in **S**'s cutset to the MST, whichever edge first made some node n connected to **S** must be in the MST.  We will call this edge node n's *MST-edge*.  
 
-First, how will we maintain the solution set of edges?  We will maintain the set S of explored nodes as a Map where the key is the explored node and the value is the edge that connected that node to S.  Let's call this edge that node's *MST-edge*.  By having S be this Map, it will be $O(1)$ to check if a node is explored (an ideal quality for our growing set S) and it will also be easy for us to get all the MST's edges from our map when the algorithm terminates.  
+Now we understand how we'll use **S** to maintain the growing MST and set of MST-reachable nodes.  Before we can tackle the question of how to always know which is the minimum edge is **S**'s cutset, let's first talk about one concept: **cutset nodes**.  The concept of cutset nodes is simple enough.  We know that every cut has a cutset -- a set of edges with only one end in the cut.  The cutset nodes are all the nodes on the other end of the edges of the cutset.  
 
-Okay, back to the priority queue of edges in the cutset -- how do we maintain it?  Well, the priority queue isn't actually going to be for edges in the cutset but rather *nodes* in the cutset.  When we add some node to S, all of its unexplored neighbours will be added to the priority queue.  The priority queue will use a node's current best MST-edge as a key, and the node itself as the value.  That way, when we remove a node from the priority queue we can add it and its current best MST-edge to S.  So we can think of the priority queue as a data structure that is always, for all nodes currently in S's cutset, holding their best MST-edge.  If at any point their MST-edge is the minimum edge in the entire cutset of edges, they and their MST edge should be added to S.  And this will be easy to do since that node will be the minimum value in the priority queue if that is the case.  
+Alright, so how are we going to constantly know which is the minimum edge in the cutset?  By maintaining a priority queue **Q** of the edges in the cutset, of course!  Actually, the implementation is slightly more complicated but the general idea is to maintain a priority queue of cutset edges.  So how does it really work?  
 
-So here's the idea of the algorithm:  start with an empty Map of explored nodes and their MST-edges.  Start with an empty priority queue of nodes in the cutset and their best MST-edge.  Add the root node to S and add all of its neighbours to the priority queue, using the edge that connects them to the root as their current best MST-edge.  While there are nodes in the priority queue, remove the minimum and do the following: add the removed node and its current best MST-edge to the map S.  Add all of its neighbours not in S to the priority queue.  If they are already in the priority queue, update their associated MST-edge as necessary.  
+The priority queue **Q** won't store the cutset edges themselves but rather the cutset nodes *prioritized by* their current minimum MST-edges.  In other words, **Q** will store key-value pairs where the value is a node that's one of **S**'s cutset nodes and the key is the minimum MST-edge of that node (the minimum edge that can connect that node to **S**).  By using **Q** this way, every time we dequeue from **Q** we get an edge to add to our MST and the node that it connected to **S**.  Also, every time we add a node and its MST edge to **S**, all of that node's unvisited neighbours become **S**'s cutset nodes.  Therefore we add them (and their cheapest cutset edges) to **Q**, or if they're already in **Q** we just update their edge values and position in **Q** if the new MST edge is cheaper than the existing one.  
+
+So here's the idea of the algorithm:  start with an empty Map for explored nodes and their MST-edges.  Start with an empty priority queue for nodes in the cutset and their best MST-edge.  Add the root node to S and add all of its neighbours to the priority queue, using the edge that connects them to the root as their current best MST-edge.  While there are nodes in the priority queue, remove the minimum and do the following: add the removed node and its current best MST-edge to the map S.  Add all of its neighbours not in S to the priority queue.  If they are already in the priority queue, update their associated MST-edge as necessary.  
 
 Here's some pseudocode.  
 
@@ -67,10 +69,11 @@ Here's some pseudocode.
 Algorithm Prim:
     Initialize empty Map S of (explored node, MST-edge) pairs
     Initialize empty priority queue Q of 
-     (current best MST-edge, cutset-of-S-node) pairs
+     (current best MST-edge, node in cutset-of-S) pairs
     Add the root node to S with no MST-edge
-    Add the root's neighbours to Q with their shared edge using
-     the root as the key
+    For each edge e connecting the root to its neighbours u 
+        Add the key-value pair (e, u) to Q
+    Endfor
 
     While Q is not empty
         Remove-Mininum from Q and call it n
@@ -79,9 +82,9 @@ Algorithm Prim:
             If n is not in Q
                 Add (e,n) to Q
             Else
-                If e's weight is less than n's edge's weight in Q
-                    Update n's edge in Q to e, and
-                     update n's position in Q
+                If e's weight is less than n's MST-edge weight in Q
+                    Update n's MST-edge in Q to e, and update n's
+                     position in Q by removing and readding it to Q
                 Endif
             Endif
         Endfor
@@ -89,7 +92,7 @@ Algorithm Prim:
 End Algorithm
 ~~~
 
-One quick implementation detail: There's a special data structure called an *indexed priority queue* that let's us have $O(1)$ lookup time for any value in the priority queue.  Basically you just keep a Map of (node, node's entry in priority queue) running at all times.  Basically it's just a priotiry queue + map.  
+One quick implementation detail: There's a special data structure called an *indexed priority queue* that let's us have $O(1)$ lookup time for any value in the priority queue.  It's just like a regular priority queue but you also keep a Map of (node, node's entry in priority queue) running at all times so you can do lookups in the queue in $O(n)$.  Basically it's just a priotiry queue with a map of its values being maintained at the same time.  
 
 ## Kruskal's Algorithm for MST-Building  
 
