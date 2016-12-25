@@ -90,8 +90,19 @@ It's easy enough to see that no matter what strategy we use to find augmenting p
 
 In the example from the last section, it only took 2 paths if we chose the paths $S \rightarrow A \rightarrow C \rightarrow T$ and $S \rightarrow C \rightarrow A \rightarrow T$.  It would have taken 3 if we had chosen $S \rightarrow A \rightarrow T$ then $S \rightarrow C \rightarrow T$ then $S \rightarrow A \rightarrow C \rightarrow T$.  So what's a good way of choosing paths?  
 
-Consider that the two most obviously reasonable choices are: always pick the augmenting path with the greatest bottleneck capacity or always pick the augmenting path with the shortest number of edges.  In the example we just did, the faster choice would have been to pick the augmenting path with the greatest bottleneck capacity, which would have given us the two-path solution.  In fact, which strategy of the two strategies (or any other strategies you can think of) is best depends on the special properties of the flow network (if any) whose max flow you're trying to find.  In general, it's usually considered best to choose the shortest augmenting path first.  This is also convenient because it can be found with a simple breadth-first search.  
+Consider that the two most obviously reasonable choices are: always pick the augmenting path with the greatest bottleneck capacity or always pick the augmenting path with the shortest number of edges.  In the example we just did, the faster choice would have been to pick the augmenting path with the greatest bottleneck capacity, which would have given us the two-path solution.  In fact, which strategy of the two strategies (or any other strategies you can think of) is best depends on the special properties of the flow network (if any) whose max flow you're trying to find.  In general, it's usually considered best to choose the shortest augmenting path first.  This is also convenient because it can be found with a simple breadth-first search.  However, if we wanted to use the augmenting path with the greatest bottleneck capacity we could use a Dijkstra-style search called a PFS (priority-first search).  
 
 ##  The Algorithm  
 
-**INCOMPLETE**
+Okay, so we now have a strategy for getting augmenting paths and we know that our algorithm is simply going to augment flow on every augmenting path until there are no augmenting paths left.  Here's the pseudocode:  
+
+~~~
+Algorithm Find-Maxflow:
+Set maxflow to 0
+While augmenting path p is found (using BFS or PFS)
+    Compute bottleneck capacity b of p
+    Add b to all edges of p
+    Increment maxflow by b
+Endwhile
+~~~
+

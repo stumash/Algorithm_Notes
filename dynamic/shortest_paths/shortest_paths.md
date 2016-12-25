@@ -40,7 +40,7 @@ The algorithm returns the last row that it fills in.  Here's a demo of its execu
 
 ![](bf_demo.png)  
 
-Let's refer to the row as the array `r[]`, where `r[v]` is the length of the shortest $s \rightarrow v$ path.  To reconstruct the $s \rightarrow v$ path itself you need only the array `r[]` and a very simple strategy:  
+Let's refer to the last row as the array `r[]`, where `r[v]` is the length of the shortest $s \rightarrow v$ path.  To reconstruct the $s \rightarrow v$ path itself you need only the array `r[]` and a very simple strategy:  
 
 *  Start at the node $v$ of your choice (so start at `r[v]`).  Push $v$ onto a stack.  
 *  Find $v$'s neighbour $u$ such that `r[u]` + $w(u,v)$ = `r[v]`.  Now push $u$ onto the stack.  
