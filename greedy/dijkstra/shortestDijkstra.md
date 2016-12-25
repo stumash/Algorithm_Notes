@@ -1,6 +1,6 @@
 ## Dijkstra's Shortest Path -- The General Idea  
 
-Dijkstra's Shortest Path Algorithm (DSPA) is a certain kind of graph traversal for weighted graphs.  Like all graph traversals, it begins at the root node of your choice.  The difference is that when DSPA terminates, you will have the path-length and path taken for all the shortest paths from the root node to anywhere else.  That's the point of DSPA -- to get you the shortest path from the root to all other nodes.  
+Dijkstra's Shortest Path Algorithm (DSPA) is a certain kind of graph traversal for weighted graphs.  Like all graph traversals, it begins at the root node of your choice.  The difference is that when DSPA terminates, you will have the path-length and path itself for all the shortest paths from the root node to anywhere else.  That's the point of DSPA -- to get you the shortest path from the root to all other nodes.  
 
 The way DSPA works is very similar to a breadth-first traversal.  In a breadth-first traversal, you visit a node and then enqueue all its unvisited neighbours.  The next node to visit is just the next node you dequeue.  You just repeat that over and over.  
 
@@ -8,11 +8,11 @@ In DSPA, you don't just immediately enqueue all the unvisited neighbours.  In or
 
 ## Some Exemplary Behaviour  
 
-Let's remember that the ultimate goal is to know the shortest-path-length and shortest-path itself from root to all other nodes.  This is achieved by actually traversing the graph in order of which node is closest to root.  I repeat: DSPA traverses the graph in order of which node is closest to root.  So, in the following examples where node A is the root (as it will be for all future examples), what is traversal-route taken by DSPA through the graph?
+Let's remember that the ultimate goal is to know the shortest-path-length and shortest-path itself from root to all other nodes.  This is achieved by actually traversing the graph in order of which node is closest to root.  I repeat: DSPA traverses the graph in order of which node is closest to root.  So, in the following examples where node A is the root (as it will be for all future examples), what is the traversal-route taken by DSPA through the graph?
 
 ![](example1.png)  
 
-If your answer was A-B-C then congratulations.  DSPA started at A and recorded that the path-length to A is 0.  Then it looked at A's neighbours.  It saw that B was unvisited and that the distance from A to B is 5.  It also looked at C and saw that it was unvisited with a distance-from-A of length 10.  Since B was the closer-to-root unvisited node, it visited B.  Now that it was at B, it saw that B has no unvisited neighbours.  Therefore, it didn't have to think about anything and just went to the next closest-to-A node that it knew about, node C.  In the end, it had recorded that B had a shortest-path-length of 5 and that C had a shortest-path-length of 10.  
+If your answer was A-B-C then congratulations.  DSPA started at A and recorded that the path-length from root to A is 0.  Then it looked at A's neighbours.  It saw that B was unvisited and that the distance from A to B is 5.  It also looked at C and saw that it was unvisited with a distance-from-A of 10.  Since B was the closer-to-root unvisited node, it visited B.  Now that it was at B, it saw that B has no unvisited neighbours.  Therefore, it didn't have to think about anything and just went to the node next-closest-to-A that it knew about, node C.  In the end, it had recorded that B had a shortest-path-length of 5 and that C had a shortest-path-length of 10.  
 
 Now I know what you're wondering: you've shown me how it records the path length for that simple example, but what about the path itself? How does it record that?  
 
