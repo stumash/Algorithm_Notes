@@ -3,7 +3,7 @@
 These notes assume an understanding of Asymptotic Time Complexity Analysis (Big O).  Namely, that $O(f(n))$ is the set of functions that are asymptotically upper-bound by $f(n)$ -- that is to say the set of functions for which we can choose some input value $n_0$ beyond which all functions in the set can be guaranteed to be less than some constant multiple of $f(n)$.  
 
 $$
-O(f(n))=\{x(n):x(n) \le k \cdot f(n)\ where\ n \ge n_0 \ge 0 \land k \lt \infty\}
+O(f(n))=\{x(n): \exists n_0 \in \mathbb{N}_{\ge 0}, \forall n \gt n_0,\ \ x(n) \le k \cdot f(n)\ (k \in \mathbb{R}_{\gt 0}) \}
 $$
 
 These notes also assume a basic familiarity with algorithms and data structures.  For example, a decent understanding of the time complexity of mergesort, hashmaps, stacks, queues and binary trees are all taken for granted in any explanations found in these notes.  
