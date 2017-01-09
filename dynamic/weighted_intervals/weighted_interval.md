@@ -86,8 +86,16 @@ function Opt(j) {
 ## Running Time  
 
 Sorting the array by finishing time takes $O(n \log(n))$  
-Computing $p(n) \forall n$ takes $O(n \log(n))$ (using binary search)  
+Computing $p(n) \forall n$ takes $O(n \log(n))$ (also uses sort, but by start time)  
 Computing $OPT(n)$ using recursion and 'memoization' (storing sub-results) takes $O(n)$  
+
+So assuming we already have the intervals sorted by both finishing time and ending time (and have thus computed `p[j]` for all j), why does the algorithm then run in $O(n)$?  
+
+Well, imagine the worst case of computing some value of `Opt(j)` for some `j`.  That's the case where `Opt(j)` needs to recurse back all the way to `0` and can never use values from the memoization table -- it needs to fill them all in itself to calculate `Opt(j)`.  If we go back to the Fibonacci tree from earlier in the page which represents the execution of the recursive Fibonacci algorithm, we can imagine that if we went and memoized all left-subtrees first, all right subtrees would already be in the memoization table for lookup.  This would remove all redundant calculations.  With every right-subtree recursive call already being in the memoization table by the time the 'right-recursive' call happens, the 'execution tree' would look like this, which means at most $2n$ recursive calls for $O(n)$:  
+
+![](fib_improved.png)  
+
+Also, the existence and implementation of the bottom-up/iterative solution described in the next section confirms the $O(n)$ running time.  
 
 ## Bottom-Up Solution  
 

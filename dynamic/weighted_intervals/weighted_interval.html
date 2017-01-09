@@ -98,8 +98,15 @@ function Opt(j) {
 }</code></pre>
 <h2 id="running-time">Running Time</h2>
 <p>Sorting the array by finishing time takes <span class="math inline">\(O(n \log(n))\)</span><br />
-Computing <span class="math inline">\(p(n) \forall n\)</span> takes <span class="math inline">\(O(n \log(n))\)</span> (using binary search)<br />
+Computing <span class="math inline">\(p(n) \forall n\)</span> takes <span class="math inline">\(O(n \log(n))\)</span> (also uses sort, but by start time)<br />
 Computing <span class="math inline">\(OPT(n)\)</span> using recursion and ‘memoization’ (storing sub-results) takes <span class="math inline">\(O(n)\)</span></p>
+<p>So assuming we already have the intervals sorted by both finishing time and ending time (and have thus computed <code>p[j]</code> for all j), why does the algorithm then run in <span class="math inline">\(O(n)\)</span>?</p>
+<p>Well, imagine the worst case of computing some value of <code>Opt(j)</code> for some <code>j</code>. That’s the case where <code>Opt(j)</code> needs to recurse back all the way to <code>0</code> and can never use values from the memoization table – it needs to fill them all in itself to calculate <code>Opt(j)</code>. If we go back to the Fibonacci tree from earlier in the page which represents the execution of the recursive Fibonacci algorithm, we can imagine that if we went and memoized all left-subtrees first, all right subtrees would already be in the memoization table for lookup. This would remove all redundant calculations. With every right-subtree recursive call already being in the memoization table by the time the ‘right-recursive’ call happens, the ‘execution tree’ would look like this, which means at most <span class="math inline">\(2n\)</span> recursive calls for <span class="math inline">\(O(n)\)</span>:</p>
+<div class="figure">
+<img src="fib_improved.png" />
+
+</div>
+<p>Also, the existence and implementation of the bottom-up/iterative solution described in the next section confirms the <span class="math inline">\(O(n)\)</span> running time.</p>
 <h2 id="bottom-up-solution">Bottom-Up Solution</h2>
 <p>Instead of using a recursive <code>Opt(j)</code> that has to recurse to the beginning of the intervals and then work its way to the end to give the final result, why not just use an interative solution to start at the beginning and then exit the loop and return the final value.</p>
 <div class="figure">
